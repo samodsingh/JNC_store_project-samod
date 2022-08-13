@@ -1,0 +1,155 @@
+  *{
+    box-sizing: border-box;
+  }
+  
+  .navbar{
+    width: 100%;
+    height: 100px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #690000;
+    z-index: 1000;
+    opacity: 0.9;
+
+ 
+  
+  }
+ 
+  .scrolled{
+    /* position: fixed;
+    top: 0px;
+    left: 0; */
+    background-color: rgba(132,23,43,1);
+    transition-duration: all 5s ease-in-out;
+    animation-name: example;
+    animation-duration: 1s;
+    animation-direction: alternate-reverse;  
+  }
+
+  @keyframes example {
+    100% {background-color: rgba(132,23,43,1); left:0px; top:-100px;}
+  }
+
+  #navigationbar .hamburger {
+    font-size: 20px;
+    padding-right: 20px;
+    color: #fff;
+  }
+
+  .drawer_style a{
+    width: 40px;
+    display: flex;
+  }
+
+  .logo img{
+    width: 120px;
+    margin-left: 40px;
+  }
+
+  .navigation-btn{
+    width: 60px;
+    background-color: rgba(12, 11, 11, 0.986);
+    color: whitesmoke ;
+    margin-right: 15px;
+    border: none;
+    font-size: 20px;
+  }
+    
+
+  .navigation-btn a{
+    color: whitesmoke;
+  }
+ 
+  .mune-style{
+   /* background-color: black; */
+   margin-top: 20px;
+  }
+
+ .mune-style a{
+   color: whitesmoke;
+ }
+
+.navigation-container {
+  /* width: 530px; */
+  display: flex;
+  align-items: center;
+}
+.container-nav-dropdown {
+  margin-top: 50px;
+}
+.container-nav-dropdown li {
+  display: inline;
+  margin-right: 20px;
+
+}
+.container-nav-dropdown li a {
+  margin: 0px;
+  text-decoration: none;
+  color: #90ba92;
+  text-transform: uppercase;
+}
+.container-btn{
+  width: 180px;
+  height: 100px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #ecb338;  margin: 0px 30px 0 0;
+  color: #685617;
+  cursor: pointer;
+}
+  /* Menu---------------------- */
+  .two:hover ~ .hr-sytle {
+    margin-left: 90px;
+  }
+  .three:hover ~ .hr-sytle {
+    margin-left: 180px;
+  }
+  .four:hover ~ .hr-sytle {
+    margin-left: 260px;
+  } 
+  .five:hover ~ .hr-sytle {
+    margin-left: 360px;
+  } 
+  .six:hover ~ .hr-sytle {
+    margin-left: 520px;
+  } 
+  .seven:hover ~ .hr-sytle {
+    margin-left: 690px;
+  } 
+  .hr-sytle {
+    height: .25rem;
+    width: 80px;
+    margin: 35px 0 0 0;
+    background-color:#90ba92;;
+    border: none;
+    transition: .3s ease-in-out;
+  }
+
+  /* Dropdown style-------------------------- */
+
+  .blog-style{
+    width: 150px;
+    color: white;
+  }
+
+  @media only screen and (max-width: 1220px) {
+      .navigation-container{
+        display: none;
+      };
+      .navigation{
+        visibility: visible;
+        color: black;
+       };
+    }
+
+  @media only screen and (min-width: 1220px) {
+    .navigation{
+      display: none;
+    };
+    .navigation-container{
+      visibility: visible;
+    }  
+  }

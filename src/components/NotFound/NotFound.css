@@ -1,0 +1,16 @@
+#fof{display:block; width:100%; padding:9rem 0; line-height:1.6em; text-align:center;}
+#fof .hgroup{margin-bottom:1rem;}
+#fof .hgroup h1, #fof .hgroup h2{margin:0; padding:0; text-transform:uppercase;}
+#fof .hgroup h1{margin-bottom:1rem; font-size:2.5rem;}
+#fof .hgroup h2{display:inline-block; padding:0 0 1rem 0; font-size:5rem; border:solid #CCCCCC; border-width:1px 0; text-transform:lowercase;}
+#fof p{display:block; margin:1rem 0 0 0; padding:0; font-size:1.1rem;}
+#fof p:first-child{margin-top:0;}
+
+@media only screen and (max-width: 600px) {
+    #fof{display:block; width:100%; padding:4rem 0; line-height:1em; text-align:center;}
+    #fof .hgroup{margin-bottom:0.5rem;}
+    #fof .hgroup h1, #fof .hgroup h2{margin:0; padding:0; text-transform:uppercase;}
+    #fof .hgroup h1{margin-bottom:0.5rem; font-size:0.8rem;}
+    #fof .hgroup h2{display:inline-block; padding:0 0 0.5rem 0; font-size:2rem; border:solid #CCCCCC; border-width:1px 0; text-transform:lowercase;}
+    #fof p{display:block; margin:0.5rem 0 0 0; padding:0; font-size:0.5rem;}
+}
