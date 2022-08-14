@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./Navigationbar.css";
-import logo from "../../../assets/images/logo-black.jpeg"; 
+import logo from "../../../assets/images/jnc-logo.jpeg"; 
 import {
   MenuOutlined,
 } from "@ant-design/icons";

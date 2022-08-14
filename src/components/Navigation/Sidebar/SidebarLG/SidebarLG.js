@@ -9,11 +9,12 @@ import {
   ExportOutlined,
   SnippetsOutlined,
   KeyOutlined,
-  ProfileOutlined,
   DollarCircleOutlined,
   ApiOutlined,
   DownloadOutlined,
   ApartmentOutlined,
+  AppstoreOutlined,
+  SubnodeOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 
@@ -81,19 +82,19 @@ function SidebarLG() {
                 </>
               )}
 
-              {user && (user.roles === ROLE_ADMIN || user.roles === ROLE_FACULTY) && (
+              {user &&
+                (user.roles === ROLE_ADMIN || user.roles === ROLE_FACULTY) && (
                 <Menu.Item key="/users-list" icon={<UserOutlined />}>
                   <Link to="/users-list">Users List</Link>
                 </Menu.Item>
               )}
-              {user && (user.roles === ROLE_ADMIN) && (
+              {user && user.roles === ROLE_ADMIN && (
                 <Menu.Item key="/users-tree" icon={<ApartmentOutlined />}>
                   <Link to="/users-tree">Users Tree</Link>
                 </Menu.Item>
               )}
               {user &&
-                (user.roles === ROLE_ADMIN ||
-                  user.roles === ROLE_FACULTY) && (
+                (user.roles === ROLE_ADMIN || user.roles === ROLE_FACULTY) && (
                 <Menu.Item key="/kyc-list" icon={<UserSwitchOutlined />}>
                   <Link to="/kyc-list">KYC List</Link>
                 </Menu.Item>
@@ -116,9 +117,6 @@ function SidebarLG() {
                   <Menu.Item key="/kyc" icon={<ApiOutlined />}>
                     <Link to="/kyc">KYC</Link>
                   </Menu.Item>
-                  {/* <Menu.Item key="/wallet" icon={<WalletOutlined />}>
-                    <Link to="/wallet">Wallet</Link>
-                  </Menu.Item> */}
                   <Menu.Item key="/downline" icon={<DownloadOutlined />}>
                     <Link to="/downline">Downline</Link>
                   </Menu.Item>
@@ -131,9 +129,35 @@ function SidebarLG() {
                 </>
               )}
 
-              <Menu.Item key="/profile" icon={<ProfileOutlined />}>
-                <Link to="/profile">Profile</Link>
+              <Menu.Item key="/dashboard" icon={<DashboardFilled />}>
+                <Link to="/dashboard">Dashboard</Link>
               </Menu.Item>
+              <SubMenu
+                key="product"
+                icon={<CodeSandboxSquareFilled />}
+                title="Master"
+              >
+                <Menu.Item key="/department" >
+                  <Link to="/department">Department</Link>
+                </Menu.Item>
+                <Menu.Item key="/programme">
+                  <Link to="/programme">Programme</Link>
+                </Menu.Item>
+                <Menu.Item key="/course">
+                  <Link to="/course">Course</Link>
+                </Menu.Item>
+                <Menu.Item key="/user">
+                  <Link to="/user">Faculty</Link>
+                </Menu.Item>
+              </SubMenu>
+
+              <Menu.Item key="/faculty-qualification" icon={<AppstoreOutlined />}>
+                <Link to="/faculty-qualification">Faculty Qualification</Link>
+              </Menu.Item>
+              <Menu.Item key="/faculty-experience" icon={<SubnodeOutlined />}>
+                <Link to="/faculty-experience">Faculty Experience</Link>
+              </Menu.Item>
+
               <Menu.Item key="/password-management" icon={<KeyOutlined />}>
                 <Link to="/password-management">Password Management</Link>
               </Menu.Item>

@@ -6,17 +6,19 @@ import { Link } from "react-router-dom";
 import {
   DashboardFilled,
   CodeSandboxSquareFilled,
-  OrderedListOutlined,
+  // OrderedListOutlined,
   UserOutlined,
   UserSwitchOutlined,
   ExportOutlined,
-  SnippetsOutlined,
+  // SnippetsOutlined,
   KeyOutlined,
   ProfileOutlined,
   DollarCircleOutlined,
   ApiOutlined,
   DownloadOutlined,
   ApartmentOutlined,
+  AppstoreOutlined,
+  SubnodeOutlined,
 } from "@ant-design/icons";
 
 import "./SidebarSmallScreen.css";
@@ -46,7 +48,7 @@ function SidebarSmallScreen() {
     <div id="sidebarsmallscreen">
       <div className="sider-for-small-screen">
         <Drawer
-          title="Highliv Menu"
+          title="JNC Menu"
           placement="right"
           onClose={onClose}
           visible={drawerShow}
@@ -68,41 +70,38 @@ function SidebarSmallScreen() {
 
             {/* {user && user.roles === ROLE_ADMIN && ( */}
             <>
+              <Menu.Item key="/dashboard" icon={<DashboardFilled />}>
+                <Link to="/dashboard">Dashboard</Link>
+              </Menu.Item>
               <SubMenu
                 key="product"
                 icon={<CodeSandboxSquareFilled />}
-                title="Product"
+                title="Master"
               >
-                <Menu.Item key="/add-product">
-                  <Link to="/add-product" onClick={onClose}>
-                      Add Product
-                  </Link>
+                <Menu.Item key="/department" >
+                  <Link to="/department">Department</Link>
                 </Menu.Item>
-                <Menu.Item key="/update-product">
-                  <Link to="/update-product" onClick={onClose}>
-                      Update Product
-                  </Link>
+                <Menu.Item key="/programme">
+                  <Link to="/programme">Programme</Link>
+                </Menu.Item>
+                <Menu.Item key="/course">
+                  <Link to="/course">Course</Link>
+                </Menu.Item>
+                <Menu.Item key="/user">
+                  <Link to="/user">Faculty</Link>
                 </Menu.Item>
               </SubMenu>
-              <Menu.Item key="/orders" icon={<OrderedListOutlined />}>
-                <Link to="/orders" onClick={onClose}>
-                    Orders
-                </Link>
+
+              <Menu.Item key="/faculty-qualification" icon={<AppstoreOutlined />}>
+                <Link to="/faculty-qualification">Faculty Qualification</Link>
               </Menu.Item>
-              <Menu.Item
-                key="/withdraw-request-list"
-                icon={<ExportOutlined />}
-              >
-                <Link to="/withdraw-request-list" onClick={onClose}>
-                    Withdraw Requests
-                </Link>
+              <Menu.Item key="/faculty-experience" icon={<SubnodeOutlined />}>
+                <Link to="/faculty-experience">Faculty Experience</Link>
               </Menu.Item>
-              <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Reports">
-                <Menu.Item key="5">Report 1</Menu.Item>
-                <Menu.Item key="6">Report 2</Menu.Item>
-                <Menu.Item key="7">Report 3</Menu.Item>
-                <Menu.Item key="8">Report 4</Menu.Item>
-              </SubMenu>
+
+              <Menu.Item key="/password-management" icon={<KeyOutlined />}>
+                <Link to="/password-management">Password Management</Link>
+              </Menu.Item>
             </>
             {/* )} */}
 
