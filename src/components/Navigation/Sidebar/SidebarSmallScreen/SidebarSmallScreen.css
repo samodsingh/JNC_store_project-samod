@@ -1,0 +1,24 @@
+.ant-drawer-content-wrapper {
+    width: 278px !important;
+}
+
+@media screen and (max-width: 2000px) {
+    #sidebarsmallscreen .sider-for-small-screen {
+      display: none;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    #sidebarsmallscreen .sider-for-small-screen {
+      display: block;
+    }
+  }
+  .sidebar-small-user-login-information{
+    background-color: rgb(46, 48, 45);
+  border: 1px solid;
+  text-align: left;
+  color: rgb(246, 246, 252);
+  padding: 10px;
+  font-weight: 100px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-seri
+  }

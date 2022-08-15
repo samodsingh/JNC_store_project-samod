@@ -1,0 +1,37 @@
+#components-layout-demo-top-side-2 .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ant-row-rtl #components-layout-demo-top-side-2 .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+@media screen and (max-width: 2000px) {
+  #sidebarlg .sider-for-large-screen {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #sidebarlg .sider-for-large-screen {
+    display: none;
+  }
+}
+.sidebar-lg-user-login-information{
+  background-color: rgb(46, 48, 45);
+  border: 1px solid;
+  text-align: left;
+  color: rgb(246, 246, 252);
+  padding: 15px;
+  font-weight: 100px;
+  font-family: Arial, Helvetica, sans-serif;
+}

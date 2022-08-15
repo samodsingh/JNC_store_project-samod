@@ -1,17 +1,43 @@
-import React  from "react";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+// import { useSelector } from "react-redux";
+
+import { Layout } from "antd";
+import { Content } from "antd/lib/layout/layout";
+
+import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import "./App.css";
-import Buttons from "./components/Buttons/Buttons";
-import Users from "./components/Users/UsersComponent";
+import Navbar from "./components/Navigation/Navbar";
+import OpenSidebarSmallScreen from "./components/Navigation/Sidebar/SidebarSmallScreen/OpenSidebarSmallScreen";
+
 
 function App() {
+  // const user = useSelector((state) => state.user.userDetail);
+
+  // const isUserAuthenticated = useSelector(
+  //   (state) => state.user.isUserAuthenticated
+  // );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <Buttons />
-        <p>{process.env.REACT_APP_BASE_URL}</p>
-      </header>
-      <Users />
-    </div>
+    <Layout>
+      <Router>
+        <Navbar />
+
+        <Layout className="main-app-section">
+          <OpenSidebarSmallScreen />
+          {/* {user && isUserAuthenticated && window.location.pathname !== "/" && ( */}
+          <Sidebar />
+          {/* )} */}
+          <Content>
+            <Routes>
+              <Route path="/" element={<>home component</>} />
+              <Route path="/about-us" element={<>about component</>} />
+              <Route path="/contact-us" element={<>contact component</>} />
+            </Routes>
+          </Content>
+        </Layout>
+      </Router>
+    </Layout>
   );
 }
 
