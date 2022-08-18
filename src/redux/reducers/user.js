@@ -37,15 +37,15 @@ export default function user(state = initialState, action) {
         action.userDetail &&
         action.userDetail.roles === ROLE_DEPTHEAD
     ) {
-      action.navigate("/kyc-list");
+      action.navigate("/dashboard");
     } else if (
       action &&
         action.userDetail &&
         action.userDetail.roles === ROLE_COORDINATOR
     ) {
-      action.navigate("/users-list");
+      action.navigate("/dashboard");
     } else {
-      action.navigate("/place-order");
+      action.navigate("/dashboard");
     }
     return {
       ...state,
@@ -56,7 +56,7 @@ export default function user(state = initialState, action) {
     };
   case type.USER_LOGIN_ERROR:
     notification.error({
-      message: "Highliv Login Error",
+      message: "JNC Login Error",
       description:
           action.message || "Login failed, please input correct credentials.",
     });
@@ -71,6 +71,7 @@ export default function user(state = initialState, action) {
       ...state,
       isLoading: true,
     };
+
   case type.GET_CURRENT_USER_SUCCESS:
     return {
       ...state,
@@ -79,6 +80,7 @@ export default function user(state = initialState, action) {
       isUserAuthenticated: action.isUserAuthenticated,
       actionFromInsideApp: true,
     };
+    
   case type.GET_CURRENT_USER_ERROR:
     return {
       ...state,
