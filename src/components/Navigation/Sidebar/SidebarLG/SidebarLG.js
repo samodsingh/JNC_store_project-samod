@@ -14,7 +14,15 @@ import {
   DownloadOutlined,
   ApartmentOutlined,
   AppstoreOutlined,
-  SubnodeOutlined,
+  CreditCardFilled,
+  UsergroupAddOutlined,
+  ReadFilled,
+  ProfileOutlined,
+  DeploymentUnitOutlined,
+  GoldFilled,
+  InteractionFilled,
+  ControlFilled,
+  CarFilled,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 
@@ -30,6 +38,7 @@ const { Sider } = Layout;
 
 function SidebarLG() {
   const user = useSelector((state) => state.user.userDetail);
+  console.log("user==== ", user);
   return (
     <Layout id="sidebarlg">
       <Layout>
@@ -137,16 +146,16 @@ function SidebarLG() {
                 icon={<CodeSandboxSquareFilled />}
                 title="Master"
               >
-                <Menu.Item key="/department" >
+                <Menu.Item key="/department" icon={<CreditCardFilled />} >
                   <Link to="/department">Department</Link>
                 </Menu.Item>
-                <Menu.Item key="/programme">
+                <Menu.Item key="/programme" icon={<ProfileOutlined />} >
                   <Link to="/programme">Programme</Link>
                 </Menu.Item>
-                <Menu.Item key="/course">
+                <Menu.Item key="/course" icon={<ReadFilled />} >
                   <Link to="/course">Course</Link>
                 </Menu.Item>
-                <Menu.Item key="/user">
+                <Menu.Item key="/user" icon={<UsergroupAddOutlined />} >
                   <Link to="/user">Faculty</Link>
                 </Menu.Item>
               </SubMenu>
@@ -154,12 +163,24 @@ function SidebarLG() {
               <Menu.Item key="/faculty-qualification" icon={<AppstoreOutlined />}>
                 <Link to="/faculty-qualification">Faculty Qualification</Link>
               </Menu.Item>
-              <Menu.Item key="/faculty-experience" icon={<SubnodeOutlined />}>
+              <Menu.Item key="/faculty-experience" icon={<DeploymentUnitOutlined />}>
                 <Link to="/faculty-experience">Faculty Experience</Link>
+              </Menu.Item>
+              <Menu.Item key="/event" icon={<GoldFilled />}>
+                <Link to="/event">Event</Link>
+              </Menu.Item>
+              <Menu.Item key="/activity" icon={<InteractionFilled />}>
+                <Link to="/activity">Activity</Link>
+              </Menu.Item>
+              <Menu.Item key="/fest-competitions-exhibitions" icon={<ControlFilled />}>
+                <Link to="/fest-competitions-exhibitions">Fest /Competitions /Exhibitions</Link>
+              </Menu.Item>
+              <Menu.Item key="/field-trip" icon={<CarFilled />}>
+                <Link to="/field-trip">Field trip</Link>
               </Menu.Item>
 
               <Menu.Item key="/password-management" icon={<KeyOutlined />}>
-                <Link to="/password-management">Password Management</Link>
+                <Link to="/password-management">Password Manage</Link>
               </Menu.Item>
             </Menu>
           </Sider>

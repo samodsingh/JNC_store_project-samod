@@ -6,6 +6,11 @@ export const ROLE_OFFICESTAFF = "ROLE_OFFICESTAFF";
 export const ROLE_DEPTHEAD = "ROLE_DEPTHEAD";
 export const ROLE_VPDEAN = "ROLE_VPDEAN";
 
+export const ACCESS_TOKEN = "accessToken";
+export const SUCCESS = "SUCCESS";
+export const LOGIN_ERR = "Login failed, please input correct credentials";
+export const LOGOUT_ERR = "Logout failed!";
+export const LOGIN_TOKEN_EXPIRED_ERR = "Login token expired, please login again";
 
 export const httpHeaderConfig = {
   withCredentials: true,
