@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./Navigationbar.css";
-import logo from "../../../assets/images/jnc-logo.jpeg"; 
+// import logo from "../../../assets/images/jnc-logo.jpeg"; 
+import logo from "../../../assets/images/jnc_logo1.png"; 
 import {
   MenuOutlined,
+  LogoutOutlined,
+  LoginOutlined,
 } from "@ant-design/icons";
 
 import { showDrawerByHamburger } from "../../../redux/actions/utils";
@@ -56,17 +59,9 @@ const Navigationbar = () => {
       <nav className="navigation">
         <MenuOutlined className="hamburger" onClick={showDrawer} />
       </nav>
+
       <div className=" navigation-container">
         <ul className="container-nav-dropdown">
-          {/* <li className="one">
-            <a
-              href="/"
-              className="ant-dropdown-link"
-              onClick={(e) => e.preventDefault()}
-            >
-              Home
-            </a>
-          </li> */}
           <li className="one">
             <Link to="/about-us">About us</Link>
           </li>
@@ -76,15 +71,10 @@ const Navigationbar = () => {
           <hr className="hr-sytle" />
         </ul>
         {(user === undefined || !isUserAuthenticated) && (
-          <button className="container-btn">
-            <Link to="/login">Login</Link>
-          </button>
+          <Link to="/login"><LoginOutlined className="container-btn" /></Link>
         )}
-
         {user && isUserAuthenticated && (
-          <button className="container-btn" onClick={logout}>
-            Logout
-          </button>
+          <LogoutOutlined className="container-btn" onClick={logout} />
         )}
       </div>
     </header>

@@ -13,6 +13,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import NotFound from "./components/NotFound/NotFound";
 import Login from "./components/Login/Login";
 import { getCurrentLoggedinUser } from "./redux/actions/user";
+import Department from "./components/Department/Department";
 // import { ROLE_ADMIN } from "./constants/constants";
 
 
@@ -60,7 +61,7 @@ function App() {
               {user && isUserAuthenticated && (
                 <>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/department" element={<>department</>} />
+                  <Route path="/department" element={<Department />} />
                   <Route path="/programme" element={<>programme</>} />
                   <Route path="/course" element={<>course</>} />
                   <Route path="/user" element={<>user Faculty</>} />
