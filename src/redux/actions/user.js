@@ -20,7 +20,6 @@ export function userLogout() {
   };
 }
 
-
 export function updatePassword(corrcetionPassword) {
   return {
     type: type.PASSWORD_UPDATE_REQ,
@@ -28,3 +27,9 @@ export function updatePassword(corrcetionPassword) {
   };
 } 
 
+export function addFacultyUser(faculty) {
+  return {
+    type: type.ADD_FACULTY_REQ,
+    payload: faculty,
+  }
+}

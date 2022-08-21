@@ -38,7 +38,6 @@ const { Sider } = Layout;
 
 function SidebarLG() {
   const user = useSelector((state) => state.user.userDetail);
-  console.log("user==== ", user);
   return (
     <Layout id="sidebarlg">
       <Layout>

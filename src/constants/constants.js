@@ -6,6 +6,11 @@ export const ROLE_OFFICESTAFF = "ROLE_OFFICESTAFF";
 export const ROLE_DEPTHEAD = "ROLE_DEPTHEAD";
 export const ROLE_VPDEAN = "ROLE_VPDEAN";
 
+export const PAN_DOC = "PAN_DOC";
+export const AADHAR_DOC = "AADHAR_DOC";
+export const NET_QUALIFIED_CERT_DOC = "NET_QUALIFIED_CERT_DOC";
+export const SLET_QUALIFIED_CERT_DOC = "SLET_QUALIFIED_CERT_DOC";
+
 export const ACCESS_TOKEN = "accessToken";
 export const SUCCESS = "SUCCESS";
 export const LOGIN_ERR = "Login failed, please input correct credentials";

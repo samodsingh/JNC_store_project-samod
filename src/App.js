@@ -14,6 +14,7 @@ import NotFound from "./components/NotFound/NotFound";
 import Login from "./components/Login/Login";
 import { getCurrentLoggedinUser } from "./redux/actions/user";
 import Department from "./components/Department/Department";
+import Faculty from "./components/Faculty/Faculty";
 // import { ROLE_ADMIN } from "./constants/constants";
 
 
@@ -27,9 +28,6 @@ function App() {
   useEffect(() => {
     dispatch(getCurrentLoggedinUser());
   }, [dispatch]);
-
-  console.log("user---app- ", user);
-  console.log("isUserAuthenticated- ", isUserAuthenticated);
 
   return (
     <Layout>
@@ -64,7 +62,7 @@ function App() {
                   <Route path="/department" element={<Department />} />
                   <Route path="/programme" element={<>programme</>} />
                   <Route path="/course" element={<>course</>} />
-                  <Route path="/user" element={<>user Faculty</>} />
+                  <Route path="/user" element={<Faculty />} />
                   <Route path="/faculty-qualification" element={<>faculty-qualification</>} />
                   <Route path="/faculty-experience" element={<>faculty-experience</>} />
                   <Route path="/event" element={<>event page</>} />

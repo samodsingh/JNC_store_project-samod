@@ -118,3 +118,45 @@ function* getCurrentUserAction() {
 export function* getCurrentUserSaga() {
   yield takeEvery(types.GET_CURRENT_USER_REQ, getCurrentUserAction);
 }
+
+function addFacultyUserApi(payload) {
+  return axios
+    .post(`${process.env.REACT_APP_API_URL}/api/user`, payload, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("accessToken"),
+      },
+    })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* addFacultyUserAction(action) {
+  try {
+    const res = yield call(addFacultyUserApi, action.payload);
+    console.log("res add faculty------", res);
+    if (res.success) {
+      yield put({
+        type: types.ADD_FACULTY_SUCCESS,
+        userDetail: res.data,
+      });
+    } else {
+      yield put({
+        type: types.ADD_FACULTY_ERROR,
+        message: res.message || "Error in adding faculty, please try after sometime.",
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.ADD_FACULTY_ERROR,
+      message: "Error in adding faculty, please try after sometime.",
+    });
+  }
+}
+export function* addFacultyUserSaga() {
+  yield takeEvery(types.ADD_FACULTY_REQ, addFacultyUserAction);
+}
