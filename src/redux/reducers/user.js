@@ -12,10 +12,7 @@ const initialState = {
   userDetail: undefined,
   isAuthenticated: false,
   actionFromInsideApp: false,
-  usersList: [],
-  mydownlineUsersList: [],
-  treeCounts: undefined,
-  adminDashboardDetails: undefined,
+  facultyOrUsersList: [],
 };
 
 export default function user(state = initialState, action) {
@@ -82,6 +79,52 @@ export default function user(state = initialState, action) {
     };
     
   case type.GET_CURRENT_USER_ERROR:
+    return {
+      ...state,
+      isLoading: false,
+      error: action.message,
+    };
+
+  case type.ADD_FACULTY_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+
+  case type.ADD_FACULTY_SUCCESS:
+    notification.success({
+      message: "JNC User Add Success",
+      description:
+          action.message || "Faculty (User) added successfuly.",
+    });
+    return {...state, ...{facultyOrUsersList: [...state.facultyOrUsersList, action.newAddedUserData], isLoading: false } };
+    
+  case type.ADD_FACULTY_ERROR:
+    notification.error({
+      message: "JNC User Add Error",
+      description:
+          action.message || "Faculty (User) careate failed.",
+    });
+    return {
+      ...state,
+      isLoading: false,
+      error: action.message,
+    };
+
+  case type.GET_ALL_FACULTY_OR_USER_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+  
+  case type.GET_ALL_FACULTY_OR_USER_SUCCESS:
+    return {
+      ...state,
+      isLoading: false,
+      facultyOrUsersList: action.facultyOrUsersList,
+    };
+      
+  case type.GET_ALL_FACULTY_OR_USER_ERROR:
     return {
       ...state,
       isLoading: false,

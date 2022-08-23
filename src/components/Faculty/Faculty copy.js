@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { Form, Input, Button, PageHeader, Spin, Card, Row, Col, Divider, Select, DatePicker, Upload, Switch, Progress, notification, InputNumber } from "antd";
+import { Table, Form, Input, Button, PageHeader, Spin, Card, Row, Col, Divider, Select, DatePicker, Upload, Switch, Progress, notification, InputNumber } from "antd";
 const { TextArea } = Input;
 const { Option } = Select;
+
 import "./Faculty.css";
 import { getAllDepartments } from "../../redux/actions/department";
-import { AADHAR_DOC, ACCESS_TOKEN, NET_QUALIFIED_CERT_DOC, PAN_DOC, SLET_QUALIFIED_CERT_DOC } from "../../constants/constants";
-import { addFacultyUser } from "../../redux/actions/user";
+import { AADHAR_DOC, ACCESS_TOKEN, NA, NET_QUALIFIED_CERT_DOC, PAN_DOC, SLET_QUALIFIED_CERT_DOC } from "../../constants/constants";
+import { addFacultyUser, getAllFacultyOrUser } from "../../redux/actions/user";
 
 function Faculty() {
   const [form] = Form.useForm();
@@ -29,6 +30,9 @@ function Faculty() {
   const [defaultFileListSletQualifiedCertDoc, setDefaultFileListSletQualifiedCertDoc] = useState([]);
   const isLoading = useSelector((state) => state.department.isLoading);
   const departmentList = useSelector((state) => state.department.departmentList);
+  const facultyOrUsersList = useSelector((state) => state.user.facultyOrUsersList);
+  
+  console.log("facultyOrUsersList---------", facultyOrUsersList);
 
   const layout = {
     labelCol: {
@@ -38,6 +42,276 @@ function Faculty() {
       span: 24,
     },
   };
+
+  const facultyOrUsersColumn = [
+    {
+      title: "First Name",
+      dataIndex: "firstName",
+      width: "10%",
+    },
+    {
+      title: "Middle Name",
+      dataIndex: "middleName",
+      width: "10%",
+    },
+    {
+      title: "Surname",
+      dataIndex: "surName",
+      width: "10%",
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      width: "10%",
+    },
+    {
+      title: "Father Name",
+      dataIndex: "fatherName",
+      width: "10%",
+    },
+    {
+      title: "Mother Name",
+      dataIndex: "motherName",
+      width: "10%",
+    },
+    {
+      title: "Birth Date",
+      dataIndex: "birthDate",
+      width: "10%",
+    },
+    {
+      title: "Mobile No.",
+      dataIndex: "mobile",
+      width: "10%",
+    },
+    {
+      title: "PAN",
+      dataIndex: "pan",
+      width: "10%",
+    },
+    {
+      title: "PAN Doc.",
+      dataIndex: "panDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.panDoc &&
+                record.panDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.panDoc && record.panDoc.docUrl &&
+                record.panDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.panDoc && record.panDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.panDoc && record.panDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="PAN Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "Aadhar",
+      dataIndex: "aadhaar",
+      width: "10%",
+    },
+    {
+      title: "Aadhar Doc.",
+      dataIndex: "aadhaarDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.aadhaarDoc &&
+                record.aadhaarDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.aadhaarDoc && record.aadhaarDoc.docUrl &&
+                record.aadhaarDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.aadhaarDoc && record.aadhaarDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.aadhaarDoc && record.aadhaarDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="Aadhar Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "E-Mail",
+      dataIndex: "username",
+      width: "10%",
+    },
+    {
+      title: "Roles",
+      dataIndex: "role",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <p>{record.role.map(r => <span key={r.id}>{r.role} </span>)}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Joining Date",
+      dataIndex: "joiningDate",
+      width: "10%",
+    },
+    {
+      title: "Designation",
+      dataIndex: "designation",
+      width: "10%",
+    },
+    {
+      title: "Department",
+      dataIndex: "department",
+      width: "10%",
+    },
+    {
+      title: "Physically Challenged",
+      dataIndex: "isPhyChallenged",
+      width: "10%",
+    },
+    {
+      title: "Type",
+      dataIndex: "engagementType",
+      width: "10%",
+    },
+    {
+      title: "Address Line 1",
+      dataIndex: "addressLine1",
+      width: "10%",
+    },
+    {
+      title: "Address Line 2",
+      dataIndex: "addressLine2",
+      width: "10%",
+    },
+    {
+      title: "City/Village",
+      dataIndex: "cityOrVill",
+      width: "10%",
+    },
+    {
+      title: "Postal Code",
+      dataIndex: "postalCode",
+      width: "10%",
+    },
+    {
+      title: "Religion",
+      dataIndex: "religion",
+      width: "10%",
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      width: "10%",
+    },
+    {
+      title: "Date of Leaving",
+      dataIndex: "leavingDate",
+      width: "10%",
+    },
+    {
+      title: "Caste",
+      dataIndex: "caste",
+      width: "10%",
+    },
+    {
+      title: "Is Doctorate",
+      dataIndex: "isDoctorate",
+      width: "10%",
+    },
+    {
+      title: "Is NET Qualified",
+      dataIndex: "isNETQualified",
+      width: "10%",
+    },
+    {
+      title: "NET Qualified Certificate",
+      dataIndex: "netQualifiedCertificateDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.netQualifiedCertificateDoc &&
+                record.netQualifiedCertificateDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl &&
+                record.netQualifiedCertificateDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="NET Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "NET Qualified Year",
+      dataIndex: "netQualifiedYear",
+      width: "10%",
+    },
+
+    {
+      title: "Is SLET Cleared",
+      dataIndex: "isSLETCleared",
+      width: "10%",
+    },
+    {
+      title: "SLET Qualified Certificate",
+      dataIndex: "sletQualifiedCertificateDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.sletQualifiedCertificateDoc &&
+                record.sletQualifiedCertificateDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl &&
+                record.sletQualifiedCertificateDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="NET Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "SLET Qualified Year",
+      dataIndex: "sletQualifiedYear",
+      width: "10%",
+    },
+    
+  ]
 
   const onFinish = (values) => {
     values.aadhaarDocId = aadharDocUploadId;
@@ -51,9 +325,7 @@ function Faculty() {
     values.birthDate = values.birthDate ? values.birthDate.format("YYYY-MM-DD") : null;
     values.joiningDate = values.joiningDate ? values.joiningDate.format("YYYY-MM-DD") : null;
     values.leavingDate = values.leavingDate ? values.leavingDate.format("YYYY-MM-DD") : null;
-    values.netQualifiedYear = values.netQualifiedYear ? values.netQualifiedYear : null;
-    values.sletQualifiedYear = values.sletQualifiedYear ? values.sletQualifiedYear : null;
-
+    
     if(values.isNETQualified) {
       if(values.netQualifiedCertificateDocId === -1 || values.netQualifiedCertificateDocId === undefined || values.netQualifiedCertificateDocId === null) {
         notification.error({
@@ -94,26 +366,29 @@ function Faculty() {
       }
     }
 
+    values.netQualifiedYear = values.netQualifiedYear ? values.netQualifiedYear : NA;
+    values.sletQualifiedYear = values.sletQualifiedYear ? values.sletQualifiedYear : NA;
+
     
 
     console.log(values);
     dispatch(addFacultyUser(values));
 
-    // form.resetFields();
-    // setShowNetCertUpload(false);
-    // setShowSletCertUpload(false);
-    // setProgressPanDocUpload(0);
-    // setProgressAadharDocUpload(0);
-    // setProgressNetQualifiedCertDocUpload(0);
-    // setProgressSletQualifiedCertDocUpload(0);
-    // setPanDocUploadId(-1);
-    // setAadharDocUploadId(-1);
-    // setNetQualifiedCertDocUploadId(-1);
-    // setSletQualifiedCertDocUploadId(-1);
-    // setDefaultFileListPanDoc([]);
-    // setDefaultFileListAadharDoc([]);
-    // setDefaultFileListNetQualifiedCertDoc([]);
-    // setDefaultFileListSletQualifiedCertDoc([]);
+    setShowNetCertUpload(false);
+    setShowSletCertUpload(false);
+    setProgressPanDocUpload(0);
+    setProgressAadharDocUpload(0);
+    setProgressNetQualifiedCertDocUpload(0);
+    setProgressSletQualifiedCertDocUpload(0);
+    setPanDocUploadId(-1);
+    setAadharDocUploadId(-1);
+    setNetQualifiedCertDocUploadId(-1);
+    setSletQualifiedCertDocUploadId(-1);
+    setDefaultFileListPanDoc([]);
+    setDefaultFileListAadharDoc([]);
+    setDefaultFileListNetQualifiedCertDoc([]);
+    setDefaultFileListSletQualifiedCertDoc([]);
+    form.resetFields();
   };
 
   const onDateOfBirthChange = (date, dateString) => {
@@ -253,6 +528,8 @@ function Faculty() {
 
   useEffect(() => {
     dispatch(getAllDepartments());
+    dispatch(getAllFacultyOrUser());
+
   }, [dispatch]);
 
   return (
@@ -328,7 +605,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select Gender">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select Gender"> 
                     <Option value="Male">Male</Option>
                     <Option value="Female">Female</Option>
                   </Select>
@@ -405,7 +682,6 @@ function Faculty() {
                   ]}
                 >
                   <Input type="text" placeholder="Mobile No." />
-                  {/* <InputNumber className="mobile-no-hide-inc-dec" style={{ width: "100%" }} placeholder="Mobile No." /> */}
                 </Form.Item>
               </Col>
             </Row>
@@ -630,11 +906,6 @@ function Faculty() {
                     },
                   ]}
                 >
-                  {/* <Select placeholder="Select Department" onSelect={(e) => this.getUserList(e)}>
-                    <Option value="Male">Test Department</Option>
-                    <Option value="Female">Test1 Department</Option>
-                  </Select> */}
-
                   <Select placeholder="Select Department" onSelect={(e) => setDepartmentId(e)}>
                     {departmentList.map( dept => (
                       <Option key={dept.id} value={dept.id}>{dept.departmentName}</Option>
@@ -655,7 +926,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Switch defaultChecked={false} /> {/* onChange={onChange} /> */}
+                  <Switch defaultChecked={false} />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -670,7 +941,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select Type">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select Type">
                     <Option value="Full Time">Full Time</Option>
                     <Option value="Part Time Visiting">Part Time Visiting</Option>
                     <Option value="Guest Faculty">Guest Faculty</Option>
@@ -754,7 +1025,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select Religion">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select Religion">
                     <Option value="Hinduism">Hinduism</Option>
                     <Option value="Islam">Islam</Option>
                     <Option value="Sikhism">Sikhism</Option>
@@ -779,7 +1050,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select State">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select State">
                     <Option value="Andhra Pradesh">Andhra Pradesh</Option>
                     <Option value="Arunachal Pradesh">Arunachal Pradesh</Option>
                     <Option value="Assam">Assam</Option>
@@ -863,7 +1134,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Switch defaultChecked={false} /> {/* onChange={onChange} /> */}
+                  <Switch defaultChecked={false} />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -1031,6 +1302,25 @@ function Faculty() {
             </Row>
           </Form>
         </Card>
+
+        <>
+          <div>
+            <Table
+              bordered
+              dataSource={facultyOrUsersList}
+              columns={facultyOrUsersColumn}
+              // expandable={{ expandedRowRender }}
+              // rowClassName="editable-row"
+              size="middle"
+              // scroll={{ x: "max-content" }}
+              pagination={true}
+              // scroll={{ x: "100vw", y: 580 }}
+              // scroll={{ x: "calc(900px + 50%)", y: 500 }}
+              scroll={{x: "300vw", y: 500}}
+            // scroll={{ x: true }}
+            />
+          </div>
+        </>
       </Spin>
     </div>
   );

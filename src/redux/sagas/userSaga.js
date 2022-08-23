@@ -142,7 +142,8 @@ function* addFacultyUserAction(action) {
     if (res.success) {
       yield put({
         type: types.ADD_FACULTY_SUCCESS,
-        userDetail: res.data,
+        newAddedUserData: res.data,
+        message: res.message || "Faculty (User) has been saved.",
       });
     } else {
       yield put({
@@ -160,3 +161,47 @@ function* addFacultyUserAction(action) {
 export function* addFacultyUserSaga() {
   yield takeEvery(types.ADD_FACULTY_REQ, addFacultyUserAction);
 }
+
+
+function getAllFacultyOrUserApi() {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/api/user`,{
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* getAllFacultyOrUserAction() {
+  try {
+    const res = yield call(getAllFacultyOrUserApi);
+    if (res.success) {
+      yield put({
+        type: types.GET_ALL_FACULTY_OR_USER_SUCCESS,
+        facultyOrUsersList: res.data,
+      });
+    } else {
+      yield put({
+        type: types.GET_ALL_FACULTY_OR_USER_ERROR,
+        message: res.message || "Error in getting faculty or users list, Please try after sometime."
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.GET_ALL_FACULTY_OR_USER_ERROR,
+      message: "Error in getting faculty or users list, Please try after sometime."
+    });
+  }
+}
+export function* getAllFacultyOrUserSaga() {
+  yield takeEvery(types.GET_ALL_FACULTY_OR_USER_REQ, getAllFacultyOrUserAction);
+}
+

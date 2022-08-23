@@ -33,3 +33,9 @@ export function addFacultyUser(faculty) {
     payload: faculty,
   }
 }
+
+export function getAllFacultyOrUser() {
+  return {
+    type: type.GET_ALL_FACULTY_OR_USER_REQ,
+  }
+}
