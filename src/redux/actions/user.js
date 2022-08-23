@@ -39,3 +39,10 @@ export function getAllFacultyOrUser() {
     type: type.GET_ALL_FACULTY_OR_USER_REQ,
   }
 }
+
+export function setSelectedFacultyUserForEdit(record) {
+  return {
+    type: type.SET_SELECTED_FACULTY_USER_FOR_EDIT,
+    payload: record,
+  };
+}

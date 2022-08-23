@@ -10,8 +10,11 @@ const initialState = {
   isLoading: false,
   error: null,
   userDetail: undefined,
+  selectedFacultyUserForEdit: undefined,
   isAuthenticated: false,
   actionFromInsideApp: false,
+  modalVisibleState: false,
+  confirmEditProductLoadingState: false,
   facultyOrUsersList: [],
 };
 
@@ -154,6 +157,12 @@ export default function user(state = initialState, action) {
       ...state,
       isLoading: false,
       error: action.message,
+    };
+
+  case type.SET_SELECTED_FACULTY_USER_FOR_EDIT:
+    return {
+      ...state,
+      selectedFacultyUserForEdit: action.payload,
     };
 
   default:

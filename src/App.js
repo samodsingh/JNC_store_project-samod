@@ -6,7 +6,8 @@ import { Layout } from "antd";
 import { Content } from "antd/lib/layout/layout";
 
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import "./App.less";
+import "./style/App.less";
+import "./style/shared/shared.css";
 import Navbar from "./components/Navigation/Navbar";
 import OpenSidebarSmallScreen from "./components/Navigation/Sidebar/SidebarSmallScreen/OpenSidebarSmallScreen";
 import Dashboard from "./components/Dashboard/Dashboard";

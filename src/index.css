@@ -11,4 +11,5 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-@import "./animate.css";
+/* @import "./style/shared/shared.css"; */
+@import "./style/shared/animate.css";

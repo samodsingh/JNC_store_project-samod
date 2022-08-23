@@ -2,34 +2,60 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { Form, Input, Button, PageHeader, Spin, Card, Row, Col, Divider, Select, DatePicker, Upload, Switch, Progress, notification, InputNumber } from "antd";
+import moment from "moment";
+import { Modal, Table, Form, Input, Button, PageHeader, Spin, Card, Row, Col, Divider, Select, DatePicker, Upload, Switch, Progress, notification, InputNumber } from "antd";
 const { TextArea } = Input;
 const { Option } = Select;
+
+import {
+  EditOutlined,
+} from "@ant-design/icons";
+
 import "./Faculty.css";
 import { getAllDepartments } from "../../redux/actions/department";
-import { AADHAR_DOC, ACCESS_TOKEN, NET_QUALIFIED_CERT_DOC, PAN_DOC, SLET_QUALIFIED_CERT_DOC } from "../../constants/constants";
-import { addFacultyUser } from "../../redux/actions/user";
+import { AADHAR_DOC, AADHAR_DOC_MODAL, ACCESS_TOKEN, NA, NET_QUALIFIED_CERT_DOC, NET_QUALIFIED_CERT_DOC_MODAL, PAN_DOC, PAN_DOC_MODAL, SLET_QUALIFIED_CERT_DOC, SLET_QUALIFIED_CERT_DOC_MODAL } from "../../constants/constants";
+import { addFacultyUser, getAllFacultyOrUser, setSelectedFacultyUserForEdit } from "../../redux/actions/user";
+import { showHideModal } from "../../redux/actions/utils";
 
 function Faculty() {
+  const [formModal] = Form.useForm();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const [showNetCertUpload, setShowNetCertUpload] = useState(false);
+  const [showNetCertUploadModal, setShowNetCertUploadModal] = useState(false);
   const [showSletCertUpload, setShowSletCertUpload] = useState(false);
+  const [showSletCertUploadModal, setShowSletCertUploadModal] = useState(false);
   const [progressPanDocUpload, setProgressPanDocUpload] = useState(0);
+  const [progressPanDocUploadModal, setProgressPanDocUploadModal] = useState(0);
+  const [progressAadharDocUploadModal, setProgressAadharDocUploadModal] = useState(0);
   const [progressAadharDocUpload, setProgressAadharDocUpload] = useState(0);
   const [progressNetQualifiedCertDocUpload, setProgressNetQualifiedCertDocUpload] = useState(0);
+  const [progressNetQualifiedCertDocUploadModel, setProgressNetQualifiedCertDocUploadModel] = useState(0);
   const [progressSletQualifiedCertDocUpload, setProgressSletQualifiedCertDocUpload] = useState(0);
+  const [progressSletQualifiedCertDocUploadModal, setProgressSletQualifiedCertDocUploadModal] = useState(0);
   const [panDocUploadId, setPanDocUploadId] = useState(-1);
+  const [panDocUploadIdModal, setPanDocUploadIdModal] = useState(-1);
+  const [aadharDocUploadIdModal, setAadharDocUploadIdModal] = useState(-1);
   const [aadharDocUploadId, setAadharDocUploadId] = useState(-1);
   const [netQualifiedCertDocUploadId, setNetQualifiedCertDocUploadId] = useState(-1);
+  const [netQualifiedCertDocUploadIdModal, setNetQualifiedCertDocUploadIdModal] = useState(-1);
   const [sletQualifiedCertDocUploadId, setSletQualifiedCertDocUploadId] = useState(-1);
+  const [sletQualifiedCertDocUploadIdModal, setSletQualifiedCertDocUploadIdModal] = useState(-1);
   const [defaultFileListPanDoc, setDefaultFileListPanDoc] = useState([]);
+  const [defaultFileListPanDocModal, setDefaultFileListPanDocModal] = useState([]);
+  const [defaultFileListAadharDocModal, setDefaultFileListAadharDocModal] = useState([]);
   const [defaultFileListAadharDoc, setDefaultFileListAadharDoc] = useState([]);
   const [defaultFileListNetQualifiedCertDoc, setDefaultFileListNetQualifiedCertDoc] = useState([]);
+  const [defaultFileListNetQualifiedCertDocModal, setDefaultFileListNetQualifiedCertDocModal] = useState([]);
   const [defaultFileListSletQualifiedCertDoc, setDefaultFileListSletQualifiedCertDoc] = useState([]);
   const isLoading = useSelector((state) => state.department.isLoading);
   const departmentList = useSelector((state) => state.department.departmentList);
+  const facultyOrUsersList = useSelector((state) => state.user.facultyOrUsersList);
+  const confirmEditFacultyUserLoadingState = useSelector((state) => state.user.confirmEditFacultyUserLoadingState);
+  const selectedFacultyUserForEdit = useSelector((state) => state.user.selectedFacultyUserForEdit);
 
+  // console.log("facultyOrUsersList---------", facultyOrUsersList);
+  
   const layout = {
     labelCol: {
       span: 24,
@@ -38,8 +64,1223 @@ function Faculty() {
       span: 24,
     },
   };
+  
+  const modalVisibleState = useSelector((state) => state.utils.modalVisibleState);
+  // console.log("modalVisibleState---------", modalVisibleState);
+
+  const showModalAndEdit = (record) => {
+    console.log("for edit, record--", record);
+    console.log("isPhyChallenged, record--", record.isPhyChallenged);
+    console.log("isDoctorate, record--", record.isDoctorate);
+    console.log("isSLETCleared, record--", record.isSLETCleared);
+    console.log("isNETQualified, record--", record.isNETQualified);
+    dispatch(showHideModal(true));
+    dispatch(setSelectedFacultyUserForEdit(record));
+    setPanDocUploadIdModal(record && record.panDoc && record.panDoc.id);
+    setAadharDocUploadIdModal(record && record.aadhaarDoc && record.aadhaarDoc.id);
+
+    formModal.setFieldsValue({
+      firstNameModal: record && record.firstName,
+      middleNameModal: record && record.middleName,
+      surNameModal: record && record.surName,
+      genderModal: record && record.gender,
+      fatherNameModal: record && record.fatherName,
+      motherNameModal: record && record.motherName,
+      birthDateModal: record && record.birthDate && moment(record.birthDate),
+      mobileModal: record && record.mobile,
+      panModal: record && record.pan,
+      aadhaarModal: record && record.aadhaar,
+      panDocIdModal: record && record.panDoc && record.panDoc.id,
+      aadhaarDocIdModal: record && record.aadhaarDoc && record.aadhaarDoc.id,
+      roleModal: record && record.role && record.role.map(r => r.role),
+      joiningDateModal: record && record.joiningDate && moment(record.joiningDate),
+      designationModal: record && record.designation,
+      // departmentIdModal: record && record.departmentIdModal,
+      postalCodeModal: record && record.postalCode,
+      cityOrVillModal: record && record.cityOrVill,
+      addressLine2Modal: record && record.addressLine2,
+      addressLine1Modal: record && record.addressLine1,
+      engagementTypeModal: record && record.engagementType,
+      isPhyChallengedModal: record && record.isPhyChallenged,
+      
+      isSLETClearedModal: record && record.isSLETCleared,
+      isNETQualifiedModal: record && record.isNETQualified,
+      isDoctorateModal: record && record.isDoctorate,
+      casteModal: record && record.caste,
+      leavingDateModal: record && record.leavingDate && moment(record.leavingDate),
+      stateModal: record && record.state,
+      religionModal: record && record.religion,
+      sletQualifiedYearModal: record && record.sletQualifiedYear,
+      netQualifiedYearModal: record && record.netQualifiedYear,
+      sletQualifiedCertificateDocIdModal: record && record.sletQualifiedCertificateDocId,
+      netQualifiedCertificateDocIdModal: record && record.netQualifiedCertificateDocId,
+
+      
+    });
+  };
+
+  const updateFacultyUserInformation = (values, userId) => {
+    console.log("modal=== ", values, userId);
+    console.log("setPanDocUploadIdModal=== ", panDocUploadIdModal);
+    console.log("setAadharDocUploadIdModal=== ", aadharDocUploadIdModal);
+
+    values.netQualifiedCertificateDocId = netQualifiedCertDocUploadIdModal;
+    values.sletQualifiedCertificateDocId = sletQualifiedCertDocUploadIdModal;
+
+    // console.log("values-----", values);
+    // formModal.validateFields(
+    //   ["firstNameModal", "middleNameModal", "lastNameModal"],
+    //   (err, values) => { // the rest remains the same...
+    //     if (!err) {
+    //     }
+    //   }
+    // );
+
+    // dispatch(
+    //   editModalProducts({
+    //     id: userId,
+    //     productDesc: values.productDescModal,
+    //     productImageId: productImageUploadId,
+    //     productPrice: values.productPriceModal,
+    //     productTitle: values.productTitleModal,
+    //   })
+    // );
+  };
+
+  const cancleModal = () => {
+    dispatch(setSelectedFacultyUserForEdit(undefined));
+    dispatch(showHideModal(false));
+  };
+
+  const facultyOrUsersColumn = [
+    {
+      title: "First Name",
+      dataIndex: "firstName",
+      width: "10%",
+    },
+    {
+      title: "Middle Name",
+      dataIndex: "middleName",
+      width: "10%",
+    },
+    {
+      title: "Surname",
+      dataIndex: "surName",
+      width: "10%",
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      width: "10%",
+    },
+    {
+      title: "Father Name",
+      dataIndex: "fatherName",
+      width: "10%",
+    },
+    {
+      title: "Mother Name",
+      dataIndex: "motherName",
+      width: "10%",
+    },
+    {
+      title: "Birth Date",
+      dataIndex: "birthDate",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{ record && record.birthDate && new Date(record.birthDate).toISOString().split( "T" )[0] }</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "Mobile No.",
+      dataIndex: "mobile",
+      width: "10%",
+    },
+    {
+      title: "PAN",
+      dataIndex: "pan",
+      width: "10%",
+    },
+    {
+      title: "PAN Doc.",
+      dataIndex: "panDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.panDoc &&
+                record.panDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.panDoc && record.panDoc.docUrl &&
+                record.panDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.panDoc && record.panDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.panDoc && record.panDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="PAN Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "Aadhar",
+      dataIndex: "aadhaar",
+      width: "10%",
+    },
+    {
+      title: "Aadhar Doc.",
+      dataIndex: "aadhaarDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.aadhaarDoc &&
+                record.aadhaarDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.aadhaarDoc && record.aadhaarDoc.docUrl &&
+                record.aadhaarDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.aadhaarDoc && record.aadhaarDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.aadhaarDoc && record.aadhaarDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="Aadhar Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "E-Mail",
+      dataIndex: "username",
+      width: "10%",
+    },
+    {
+      title: "Roles",
+      dataIndex: "role",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <p>{record.role.map(r => <span key={r.id}>{r.role} </span>)}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Joining Date",
+      dataIndex: "joiningDate",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.joiningDate && new Date(record.joiningDate).toISOString().split( "T" )[0] }</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "Designation",
+      dataIndex: "designation",
+      width: "10%",
+    },
+    {
+      title: "Department",
+      dataIndex: "department",
+      width: "10%",
+    },
+    {
+      title: "Physically Challenged",
+      dataIndex: "isPhyChallenged",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.isPhyChallenged ? "Yes": "No"}</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "Type",
+      dataIndex: "engagementType",
+      width: "10%",
+    },
+    {
+      title: "Address Line 1",
+      dataIndex: "addressLine1",
+      width: "10%",
+    },
+    {
+      title: "Address Line 2",
+      dataIndex: "addressLine2",
+      width: "10%",
+    },
+    {
+      title: "City/Village",
+      dataIndex: "cityOrVill",
+      width: "10%",
+    },
+    {
+      title: "Postal Code",
+      dataIndex: "postalCode",
+      width: "10%",
+    },
+    {
+      title: "Religion",
+      dataIndex: "religion",
+      width: "10%",
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      width: "10%",
+    },
+    {
+      title: "Date of Leaving",
+      dataIndex: "leavingDate",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.leavingDate && new Date(record.leavingDate).toISOString().split( "T" )[0] }</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "Caste",
+      dataIndex: "caste",
+      width: "10%",
+    },
+    {
+      title: "Is Doctorate",
+      dataIndex: "isDoctorate",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.isDoctorate ? "Yes": "No"}</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "Is NET Qualified",
+      dataIndex: "isNETQualified",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.isNETQualified ? "Yes": "No"}</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "NET Qualified Certificate",
+      dataIndex: "netQualifiedCertificateDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.netQualifiedCertificateDoc &&
+                record.netQualifiedCertificateDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl &&
+                record.netQualifiedCertificateDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="NET Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "NET Qualified Year",
+      dataIndex: "netQualifiedYear",
+      width: "10%",
+    },
+
+    {
+      title: "Is SLET Cleared",
+      dataIndex: "isSLETCleared",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.isSLETCleared ? "Yes": "No"}</span>
+          </>
+        );
+      },
+    },
+    {
+      title: "SLET Qualified Certificate",
+      dataIndex: "sletQualifiedCertificateDoc",
+      width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <a href={
+              record &&
+                record.sletQualifiedCertificateDoc &&
+                record.sletQualifiedCertificateDoc.docUrl
+            } download target="_blank" rel="noopener noreferrer">
+
+              {record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl &&
+                record.sletQualifiedCertificateDoc.docUrl.includes(".pdf") ? 
+                <embed width="140" height="100" src={record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
+                : <img src={ record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl }
+                  height={50}
+                  width={50}
+                  alt="SLET Doc"
+                />
+              }
+            </a>
+          </>
+        );
+      },
+    },
+    {
+      title: "SLET Qualified Year",
+      dataIndex: "sletQualifiedYear",
+      width: "10%",
+    },
+    {
+      title: "Edit",
+      dataIndex: "edit",
+      width: "5%",
+      render: (_, record) => {
+        return (
+          <>
+            <EditOutlined onClick={ () => showModalAndEdit(record) } />
+            <Modal
+              className="mis-modal"
+              mask={false}
+              title="Edit Faculty (User)"
+              visible={modalVisibleState}
+              onCancel={cancleModal}
+              footer={[
+                <Button key="cancel" onClick={cancleModal}>
+                  Cancel
+                </Button>,
+                <Button
+                  key="submit"
+                  type="primary"
+                  loading={confirmEditFacultyUserLoadingState}
+                  onClick={() => {
+                    formModal.validateFields().then((values) => {
+                      updateFacultyUserInformation(
+                        values,
+                        selectedFacultyUserForEdit && selectedFacultyUserForEdit.id
+                      );
+                    });
+                  }}
+                >
+                  Update Faculty
+                </Button>,
+              ]}
+            >
+              {/* ==========edit faculty user form in modal=========== */}
+              <Form
+                form={formModal}
+                {...layout}
+                initialValues={{
+                  remember: false,
+                }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="firstNameModal"
+                      label="First Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input First Name",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="First Name" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="middleNameModal"
+                      label="Middle Name"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please Input Middle Name",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Middle Name" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="surNameModal"
+                      label="Surname"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Surname",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Surname" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="genderModal"
+                      label="Gender"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Select Gender",
+                        },
+                      ]}
+                    >
+                      <Select placeholder="Select Gender"> 
+                        <Option value="Male">Male</Option>
+                        <Option value="Female">Female</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="fatherNameModal"
+                      label="Father Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Father Name",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Father Name" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="motherNameModal"
+                      label="Mother Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Mother Name",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Mother Name" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="birthDateModal"
+                      label="Date of Birth"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Date of Birth",
+                        },
+                      ]}
+                    >
+                      <DatePicker onChange={onDateOfBirthChange} className="mis-date-picker" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="mobileModal"
+                      label="Mobile No."
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Valid Mobile No.",
+                          pattern: /^(?:\d*)$/,
+                        },
+                        {
+                          max: 10,
+                          message: "Please input max 10 digits mobile no.",
+                        },
+                        {
+                          min: 10,
+                          message: "Please input min 10 digits mobile no.",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Mobile No." />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="panModal"
+                      label="PAN"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input PAN",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="PAN" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="aadhaarModal"
+                      label="Aadhaar"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Aadhaar",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Aadhaar" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="panDocIdModal"
+                      label="PAN Upload"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please Upload PAN",
+                        },
+                      ]}
+                    >
+                      <div className="container">
+                        <Upload
+                          accept=".pdf,image/*"
+                          customRequest={(event) =>
+                            uploadImage(event, PAN_DOC_MODAL)
+                          }
+                          listType="picture-card"
+                          onChange={onChangePanDocModal}
+                          onPreview={onPreview}
+                          fileList={defaultFileListPanDocModal}
+                          className="image-upload-grid"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please Upload PAN",
+                            },
+                          ]}
+                        >
+                          {defaultFileListPanDocModal.length < 1 &&
+                                "Upload PAN"}
+                        </Upload>
+                        {progressPanDocUploadModal > 0 ? (
+                          <Progress percent={progressPanDocUploadModal} />
+                        ) : null}
+                      </div>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="aadhaarDocIdModal"
+                      label="Aadhar Upload"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please Upload Aadhar",
+                        },
+                      ]}
+                    >
+                      <div className="container">
+                        <Upload
+                          accept=".pdf,image/*"
+                          customRequest={(event) =>
+                            uploadImage(event, AADHAR_DOC_MODAL)
+                          }
+                          listType="picture-card"
+                          onChange={onChangeAadharDocModal}
+                          onPreview={onPreview}
+                          fileList={defaultFileListAadharDocModal}
+                          className="image-upload-grid"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please Upload Aadhar",
+                            },
+                          ]}
+                        >
+                          {defaultFileListAadharDocModal.length < 1 &&
+                                "Upload Aadhar"}
+                        </Upload>
+                        {progressAadharDocUploadModal > 0 ? (
+                          <Progress percent={progressAadharDocUploadModal} />
+                        ) : null}
+                      </div>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="roleModal"
+                      label="Roles"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select role/roles.",
+                        },
+                      ]}
+                    >
+                      <Select
+                        mode="multiple"
+                        allowClear
+                        style={{
+                          width: "100%",
+                        }}
+                        placeholder="Select Roles"
+                        onChange={handleRoleSelection}
+                      >
+                        <Option value="ROLE_FACULTY">FACULTY</Option>
+                        <Option value="ROLE_ADMIN">ADMIN</Option>
+                        <Option value="ROLE_COORDINATOR">COORDINATOR</Option>
+                        <Option value="ROLE_MENTORS">MENTORS</Option>
+                        <Option value="ROLE_OFFICESTAFF">OFFICESTAFF</Option>
+                        <Option value="ROLE_DEPTHEAD">DEPTHEAD</Option>
+                        <Option value="ROLE_VPDEAN">VPDEAN</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="joiningDateModal"
+                      label="Date of Joining"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Date of Joining",
+                        },
+                      ]}
+                    >
+                      <DatePicker onChange={onDateOfBirthChange} className="mis-date-picker" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="designationModal"
+                      label="Designation"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Designation",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Designation" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="departmentIdModal"
+                      label="Department"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Select Department",
+                        },
+                      ]}
+                    >
+                      <Select placeholder="Select Department" onSelect={(e) => setDepartmentId(e)}>
+                        {departmentList.map( dept => (
+                          <Option key={dept.id} value={dept.id}>{dept.departmentName}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="isPhyChallengedModal"
+                      label="Is Physically Challenged"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <Switch defaultChecked={false} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="engagementTypeModal"
+                      label="Type"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Select Type",
+                        },
+                      ]}
+                    >
+                      <Select placeholder="Select Type">
+                        <Option value="Full Time">Full Time</Option>
+                        <Option value="Part Time Visiting">Part Time Visiting</Option>
+                        <Option value="Guest Faculty">Guest Faculty</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="addressLine1Modal"
+                      label="Address Line 1"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Address",
+                        },
+                      ]}
+                    >
+                      <TextArea rows={4} placeholder="Address" maxLength={500} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="addressLine2Modal"
+                      label="Address Line 2"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={4} placeholder="Address" maxLength={500} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="cityOrVillModal"
+                      label="City/Village"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input City/Village",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="City/Village" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="postalCodeModal"
+                      label="Postal Code"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Postal Code",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Postal Code" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="religionModal"
+                      label="Religion"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Select Religion",
+                        },
+                      ]}
+                    >
+                      <Select placeholder="Select Religion">
+                        <Option value="Hinduism">Hinduism</Option>
+                        <Option value="Islam">Islam</Option>
+                        <Option value="Sikhism">Sikhism</Option>
+                        <Option value="Christianity">Christianity</Option>
+                        <Option value="Buddhism">Buddhism</Option>
+                        <Option value="Jainism">Jainism</Option>
+                        <Option value="Zoroastrianism">Zoroastrianism</Option>
+                        <Option value="Judaism">Judaism</Option>
+                        <Option value="Other">Other</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="stateModal"
+                      label="State"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Select State",
+                        },
+                      ]}
+                    >
+                      <Select placeholder="Select State">
+                        <Option value="Andhra Pradesh">Andhra Pradesh</Option>
+                        <Option value="Arunachal Pradesh">Arunachal Pradesh</Option>
+                        <Option value="Assam">Assam</Option>
+                        <Option value="Bihar">Bihar</Option>
+                        <Option value="Chhattisgarh">Chhattisgarh</Option>
+                        <Option value="Goa">Goa</Option>
+                        <Option value="Gujarat">Gujarat</Option>
+                        <Option value="Haryana">Haryana</Option>
+                        <Option value="Himachal Pradesh">Himachal Pradesh</Option>
+                        <Option value="Jharkhand">Jharkhand</Option>
+                        <Option value="Karnataka">Karnataka</Option>
+                        <Option value="Kerala">Kerala</Option>
+                        <Option value="Madhya Pradesh">Madhya Pradesh</Option>
+                        <Option value="Maharashtra">Maharashtra</Option>
+                        <Option value="Manipur">Manipur</Option>
+                        <Option value="Meghalaya">Meghalaya</Option>
+                        <Option value="Mizoram">Mizoram</Option>
+                        <Option value="Nagaland">Nagaland</Option>
+                        <Option value="Odisha">Odisha</Option>
+                        <Option value="Punjab">Punjab</Option>
+                        <Option value="Rajasthan">Rajasthan</Option>
+                        <Option value="Sikkim">Sikkim</Option>
+                        <Option value="Tamil Nadu">Tamil Nadu</Option>
+                        <Option value="Telangana">Telangana</Option>
+                        <Option value="Tripura">Tripura</Option>
+                        <Option value="Uttar Pradesh">Uttar Pradesh</Option>
+                        <Option value="Uttarakhand">Uttarakhand</Option>
+                        <Option value="West Bengal">West Bengal</Option>
+                        <Option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</Option>
+                        <Option value="Chandigarh">Chandigarh</Option>
+                        <Option value="Dadra and Daman Diu">Dadra and Daman Diu</Option>
+                        <Option value="Delhi">Delhi</Option>
+                        <Option value="Jammu and Kashmir">Jammu and Kashmir</Option>
+                        <Option value="Ladakh">Ladakh</Option>
+                        <Option value="Lakshadweep">Lakshadweep</Option>
+                        <Option value="Puducherry">Puducherry</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="leavingDateModal"
+                      label="Date of Leaving"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <DatePicker onChange={onDateOfBirthChange} className="mis-date-picker" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="casteModal"
+                      label="Caste"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Caste",
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Caste" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="isDoctorateModal"
+                      label="Is Doctorate"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <Switch defaultChecked={record && record.isDoctorate} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="isNETQualifiedModal"
+                      label="Is NET Qualified"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <Switch defaultChecked={record && record.isNETQualified}  onChange={onChangeIsNETQualifiedModal} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="isSLETClearedModal"
+                      label="Is SLET Cleared"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <Switch defaultChecked={record && record.isSLETCleared} onChange={onChangeIsSLETClearedModal} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                {/* <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="panDocIdModal"
+                      label="PAN Upload"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please Upload PAN",
+                        },
+                      ]}
+                    >
+                      <div className="container">
+                        <Upload
+                          accept=".pdf,image/*"
+                          customRequest={(event) =>
+                            uploadImage(event, PAN_DOC_MODAL)
+                          }
+                          listType="picture-card"
+                          onChange={onChangePanDocModal}
+                          onPreview={onPreview}
+                          fileList={defaultFileListPanDocModal}
+                          className="image-upload-grid"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please Upload PAN",
+                            },
+                          ]}
+                        >
+                          {defaultFileListPanDocModal.length < 1 &&
+                                "Upload PAN"}
+                        </Upload>
+                        {progressPanDocUploadModal > 0 ? (
+                          <Progress percent={progressPanDocUploadModal} />
+                        ) : null}
+                      </div>
+                    </Form.Item>
+                  </Col>
+                  </Row> */}
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {showNetCertUploadModal &&
+                    <Form.Item
+                      className="mis-form-item"
+                      name="netQualifiedCertificateDocIdModal"
+                      label="NET Qualified Certificate"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <div className="container">
+                        <Upload
+                          accept=".pdf,image/*"
+                          customRequest={(event) =>
+                            uploadImage(event, NET_QUALIFIED_CERT_DOC_MODAL)
+                          }
+                          listType="picture-card"
+                          onChange={onChangeNetQualifiedCertDocModal}
+                          onPreview={onPreview}
+                          fileList={defaultFileListNetQualifiedCertDocModal}
+                          className="image-upload-grid"
+                          rules={[
+                            {
+                              required: false,
+                            },
+                          ]}
+                        >
+                          {defaultFileListNetQualifiedCertDocModal.length < 1 &&
+                            "Upload NET Certificate"}
+                        </Upload>
+                        {progressNetQualifiedCertDocUploadModel > 0 ? (
+                          <Progress percent={progressNetQualifiedCertDocUploadModel} />
+                        ) : null}
+                      </div>
+                    </Form.Item>
+                    }
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {showNetCertUploadModal &&
+                    <Form.Item
+                      className="mis-form-item"
+                      name="netQualifiedYearModal"
+                      label="NET Qualified Year"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please Input 4 Digits NET Qualified Year",
+                        },
+                      ]}
+                    >
+                      <InputNumber style={{ width: "100%" }} placeholder="NET Qualified Year" min={1900} max={9999} />
+                    </Form.Item>
+                    }
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {showSletCertUploadModal &&
+                    <Form.Item
+                      className="mis-form-item"
+                      name="sletQualifiedCertificateDocIdModal"
+                      label="SLET Qualified Certificate"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      <div className="container">
+                        <Upload
+                          accept=".pdf,image/*"
+                          customRequest={(event) =>
+                            uploadImage(event, SLET_QUALIFIED_CERT_DOC_MODAL)
+                          }
+                          listType="picture-card"
+                          onChange={onChangeSletQualifiedCertDoc}
+                          onPreview={onPreview}
+                          fileList={defaultFileListSletQualifiedCertDoc}
+                          className="image-upload-grid"
+                          rules={[
+                            {
+                              required: false,
+                            },
+                          ]}
+                        >
+                          {defaultFileListSletQualifiedCertDoc.length < 1 &&
+                            "Upload SLET Certificate"}
+                        </Upload>
+                        {progressSletQualifiedCertDocUploadModal > 0 ? (
+                          <Progress percent={progressSletQualifiedCertDocUploadModal} />
+                        ) : null}
+                      </div>
+                    </Form.Item>
+                    }
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {showSletCertUploadModal &&
+                    <Form.Item
+                      className="mis-form-item"
+                      name="sletQualifiedYearModal"
+                      label="SLET Qualified Year"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please Input 4 Digits SLET Qualified Year",
+                        },
+                      ]}
+                    >
+                      <InputNumber style={{ width: "100%" }} placeholder="SLET Qualified Year" min={1900} max={9999} />
+                    </Form.Item>
+                    }
+                  </Col>
+                </Row>
+
+                
+              </Form>
+            </Modal>
+          </>
+        );
+      },
+    },
+    
+  ]
 
   const onFinish = (values) => {
+    // form.validateFields(["sletQualifiedYear", "sletQualifiedCertificateDocId", "netQualifiedYear", "netQualifiedCertificateDocId", "isSLETCleared", "isNETQualified", "isDoctorate", "caste", "leavingDate", "state", "religion", "postalCode", "cityOrVill", "addressLine2", "addressLine1", "engagementType", "isPhyChallenged", "departmentId", "designation", "joiningDate", "role", "username", "aadhaarDocId", "panDocId", "aadhaar", "pan", "mobile", "birthDate", "motherName", "fatherName", "gender", "surName", "middleName", "firstName"], 
+    //   (err, values) => { // the rest remains the same...
+    //     if (!err) {
+    //       console.log(values);
+    //     }
+    //   }
+    // );
     values.aadhaarDocId = aadharDocUploadId;
     values.panDocId = panDocUploadId;
     values.netQualifiedCertificateDocId = netQualifiedCertDocUploadId;
@@ -51,9 +1292,7 @@ function Faculty() {
     values.birthDate = values.birthDate ? values.birthDate.format("YYYY-MM-DD") : null;
     values.joiningDate = values.joiningDate ? values.joiningDate.format("YYYY-MM-DD") : null;
     values.leavingDate = values.leavingDate ? values.leavingDate.format("YYYY-MM-DD") : null;
-    values.netQualifiedYear = values.netQualifiedYear ? values.netQualifiedYear : null;
-    values.sletQualifiedYear = values.sletQualifiedYear ? values.sletQualifiedYear : null;
-
+    
     if(values.isNETQualified) {
       if(values.netQualifiedCertificateDocId === -1 || values.netQualifiedCertificateDocId === undefined || values.netQualifiedCertificateDocId === null) {
         notification.error({
@@ -94,26 +1333,40 @@ function Faculty() {
       }
     }
 
+    values.netQualifiedYear = values.netQualifiedYear ? values.netQualifiedYear : NA;
+    values.sletQualifiedYear = values.sletQualifiedYear ? values.sletQualifiedYear : NA;
+
     
 
     console.log(values);
     dispatch(addFacultyUser(values));
 
-    // form.resetFields();
-    // setShowNetCertUpload(false);
-    // setShowSletCertUpload(false);
-    // setProgressPanDocUpload(0);
-    // setProgressAadharDocUpload(0);
-    // setProgressNetQualifiedCertDocUpload(0);
-    // setProgressSletQualifiedCertDocUpload(0);
-    // setPanDocUploadId(-1);
-    // setAadharDocUploadId(-1);
-    // setNetQualifiedCertDocUploadId(-1);
-    // setSletQualifiedCertDocUploadId(-1);
-    // setDefaultFileListPanDoc([]);
-    // setDefaultFileListAadharDoc([]);
-    // setDefaultFileListNetQualifiedCertDoc([]);
-    // setDefaultFileListSletQualifiedCertDoc([]);
+    setShowNetCertUpload(false);
+    setShowNetCertUploadModal(false);
+    setShowSletCertUpload(false);
+    setShowSletCertUploadModal(false);
+    setProgressPanDocUpload(0);
+    setProgressPanDocUploadModal(0);
+    setProgressAadharDocUploadModal(0);
+    setProgressAadharDocUpload(0);
+    setProgressNetQualifiedCertDocUpload(0);
+    setProgressNetQualifiedCertDocUploadModel(0);
+    setProgressSletQualifiedCertDocUpload(0);
+    setProgressSletQualifiedCertDocUploadModal(0);
+    setPanDocUploadId(-1);
+    setAadharDocUploadId(-1);
+    setNetQualifiedCertDocUploadId(-1);
+    setNetQualifiedCertDocUploadIdModal(-1);
+    setSletQualifiedCertDocUploadId(-1);
+    setSletQualifiedCertDocUploadIdModal(-1);
+    setDefaultFileListPanDoc([]);
+    setDefaultFileListPanDocModal([]);
+    setDefaultFileListAadharDocModal([]);
+    setDefaultFileListAadharDoc([]);
+    setDefaultFileListNetQualifiedCertDoc([]);
+    setDefaultFileListNetQualifiedCertDocModal([]);
+    setDefaultFileListSletQualifiedCertDoc([]);
+    form.resetFields();
   };
 
   const onDateOfBirthChange = (date, dateString) => {
@@ -128,11 +1381,29 @@ function Faculty() {
     }
   };
 
+  const onChangeIsNETQualifiedModal = (checked) => {
+    console.log("checked=== ", checked);
+    setShowNetCertUploadModal(checked);
+    setDefaultFileListNetQualifiedCertDocModal([]);
+    if(!checked) {
+      setNetQualifiedCertDocUploadIdModal(-1);
+    }
+  };
+
   const onChangeIsSLETCleared = (checked) => {
     setShowSletCertUpload(checked);
     setDefaultFileListSletQualifiedCertDoc([]);
     if(!checked) {
       setSletQualifiedCertDocUploadId(-1);
+    }
+  };
+
+  const onChangeIsSLETClearedModal = (checked) => {
+    console.log("checked=== ", checked);
+    setShowSletCertUploadModal(checked);
+    // setDefaultFileListSletQualifiedCertDoc([]);
+    if(!checked) {
+      setSletQualifiedCertDocUploadIdModal(-1);
     }
   };
 
@@ -167,42 +1438,54 @@ function Faculty() {
       onUploadProgress: (event) => {
         const percent = Math.floor((event.loaded / event.total) * 100);
         if (type === PAN_DOC) {
-          // previousDocId = panDocUploadId;
-          // console.log(previousDocId, panDocUploadId, "type === PAN_DOC ", type === PAN_DOC)
           setProgressPanDocUpload(percent);
         }
-        if (type === AADHAR_DOC) { 
-          // console.log("type === AADHAR_DOC ", type === AADHAR_DOC)
-          // previousDocId = aadharDocUploadId;
+        if (type === PAN_DOC_MODAL) {
+          setProgressPanDocUploadModal(percent);
+        }
+        if (type === AADHAR_DOC_MODAL) {
+          setProgressAadharDocUploadModal(percent);
+        }
+        if (type === AADHAR_DOC) {
           setProgressAadharDocUpload(percent);
         }
-        if (type === NET_QUALIFIED_CERT_DOC) { 
-          // console.log("type === NET_QUALIFIED_CERT_DOC ", type === NET_QUALIFIED_CERT_DOC)
-          // previousDocId = netQualifiedCertDocUploadId;
+        if (type === NET_QUALIFIED_CERT_DOC) {
           setProgressNetQualifiedCertDocUpload(percent);
         }
+        if (type === NET_QUALIFIED_CERT_DOC_MODAL) {
+          setProgressNetQualifiedCertDocUploadModel(percent);
+        }
         if (type === SLET_QUALIFIED_CERT_DOC) {
-          // console.log("type === SLET_QUALIFIED_CERT_DOC ", type === SLET_QUALIFIED_CERT_DOC)
-          // previousDocId = sletQualifiedCertDocUploadId;
           setProgressSletQualifiedCertDocUpload(percent);
+        }
+        if (type === SLET_QUALIFIED_CERT_DOC_MODAL) {
+          setProgressSletQualifiedCertDocUploadModal(percent);
         }
 
         if (percent === 100) {
           if (type === PAN_DOC)
             setTimeout(() => setProgressPanDocUpload(0), 1000);
+          if (type === PAN_DOC_MODAL)
+            setTimeout(() => setProgressPanDocUploadModal(0), 1000);
+          if (type === AADHAR_DOC_MODAL)
+            setTimeout(() => setProgressAadharDocUploadModal(0), 1000);
           if (type === AADHAR_DOC)
             setTimeout(() => setProgressAadharDocUpload(0), 1000);
           if (type === NET_QUALIFIED_CERT_DOC)
             setTimeout(() => setProgressNetQualifiedCertDocUpload(0), 1000);
+          if (type === NET_QUALIFIED_CERT_DOC_MODAL)
+            setTimeout(() => setProgressNetQualifiedCertDocUploadModel(0), 1000);
           if (type === SLET_QUALIFIED_CERT_DOC)
             setTimeout(() => setProgressSletQualifiedCertDocUpload(0), 1000);
+          if (type === SLET_QUALIFIED_CERT_DOC_MODAL)
+            setTimeout(() => setProgressSletQualifiedCertDocUploadModal(0), 1000);
         }
         onProgress({ percent: (event.loaded / event.total) * 100 });
       },
     };
     fmData.append("file", file);
     try {
-      previousDocId = type === PAN_DOC ? panDocUploadId : type === AADHAR_DOC ? aadharDocUploadId : type === NET_QUALIFIED_CERT_DOC ? netQualifiedCertDocUploadId : type === SLET_QUALIFIED_CERT_DOC ? sletQualifiedCertDocUploadId : -1;
+      previousDocId = type === PAN_DOC ? panDocUploadId : type === AADHAR_DOC ? aadharDocUploadId : type === NET_QUALIFIED_CERT_DOC ? netQualifiedCertDocUploadId : type === NET_QUALIFIED_CERT_DOC_MODAL ? netQualifiedCertDocUploadIdModal : type === SLET_QUALIFIED_CERT_DOC ? sletQualifiedCertDocUploadId : type === SLET_QUALIFIED_CERT_DOC_MODAL ? sletQualifiedCertDocUploadIdModal : type === PAN_DOC_MODAL ? panDocUploadIdModal : type === AADHAR_DOC_MODAL ? aadharDocUploadIdModal : -1;
 
       console.log("previousDocId==== ", previousDocId);
       const res = await axios.post(
@@ -211,21 +1494,31 @@ function Faculty() {
         config
       );
       onSuccess("Ok");
-      console.log(type, "how---", res.data.data.id);
       if (type === PAN_DOC) { 
         setPanDocUploadId(res.data.data.id);
+      } else if (type === PAN_DOC_MODAL) { 
+        setPanDocUploadIdModal(res.data.data.id);
+      } else if (type === AADHAR_DOC_MODAL) { 
+        setAadharDocUploadIdModal(res.data.data.id);
       } else if (type === AADHAR_DOC) {
         setAadharDocUploadId(res.data.data.id);
       } else if (type === NET_QUALIFIED_CERT_DOC) {
         setNetQualifiedCertDocUploadId(res.data.data.id);
+      }  else if (type === NET_QUALIFIED_CERT_DOC_MODAL) {
+        setNetQualifiedCertDocUploadIdModal(res.data.data.id);
       } else if (type === SLET_QUALIFIED_CERT_DOC) {
         setSletQualifiedCertDocUploadId(res.data.data.id);
+      } else if (type === SLET_QUALIFIED_CERT_DOC_MODAL) {
+        setSletQualifiedCertDocUploadIdModal(res.data.data.id);
       }
-      // selectedProductForEdit.uploadedDocsVo = {
+
+      // setProductImageUploadId(res.data.responseData.id);
+      // selectedFacultyUserForEdit.uploadedDocsVo = {
       //   docUrl: res.data.responseData.docUrl,
       //   id: res.data.responseData.id,
       // };
-      // dispatch(setSelectedProductForEdit(selectedProductForEdit));
+      // dispatch(setSelectedFacultyUserForEdit(selectedFacultyUserForEdit));
+
     } catch (err) {
       onError({ err });
     }
@@ -235,12 +1528,23 @@ function Faculty() {
     setDefaultFileListPanDoc(newFileList);
   };
 
+  const onChangePanDocModal = ({ fileList: newFileList }) => {
+    setDefaultFileListPanDocModal(newFileList);
+  };
+
+  const onChangeAadharDocModal = ({ fileList: newFileList }) => {
+    setDefaultFileListAadharDocModal(newFileList);
+  };
+
   const onChangeAadharDoc = ({ fileList: newFileList }) => {
     setDefaultFileListAadharDoc(newFileList);
   };
 
   const onChangeNetQualifiedCertDoc = ({ fileList: newFileList }) => {
     setDefaultFileListNetQualifiedCertDoc(newFileList);
+  };
+  const onChangeNetQualifiedCertDocModal = ({ fileList: newFileList }) => {
+    setDefaultFileListNetQualifiedCertDocModal(newFileList);
   };
 
   const onChangeSletQualifiedCertDoc = ({ fileList: newFileList }) => {
@@ -253,10 +1557,12 @@ function Faculty() {
 
   useEffect(() => {
     dispatch(getAllDepartments());
+    dispatch(getAllFacultyOrUser());
+
   }, [dispatch]);
 
   return (
-    <div className="department-container">
+    <div className="content-container">
       <Spin size="large" spinning={isLoading}>
         <Card className="card-main-form">
           <PageHeader title="Add Faculty (User)" className="screen-main-item animated bounce" />
@@ -328,7 +1634,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select Gender">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select Gender"> 
                     <Option value="Male">Male</Option>
                     <Option value="Female">Female</Option>
                   </Select>
@@ -405,7 +1711,6 @@ function Faculty() {
                   ]}
                 >
                   <Input type="text" placeholder="Mobile No." />
-                  {/* <InputNumber className="mobile-no-hide-inc-dec" style={{ width: "100%" }} placeholder="Mobile No." /> */}
                 </Form.Item>
               </Col>
             </Row>
@@ -630,11 +1935,6 @@ function Faculty() {
                     },
                   ]}
                 >
-                  {/* <Select placeholder="Select Department" onSelect={(e) => this.getUserList(e)}>
-                    <Option value="Male">Test Department</Option>
-                    <Option value="Female">Test1 Department</Option>
-                  </Select> */}
-
                   <Select placeholder="Select Department" onSelect={(e) => setDepartmentId(e)}>
                     {departmentList.map( dept => (
                       <Option key={dept.id} value={dept.id}>{dept.departmentName}</Option>
@@ -655,7 +1955,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Switch defaultChecked={false} /> {/* onChange={onChange} /> */}
+                  <Switch defaultChecked={false} />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -670,7 +1970,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select Type">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select Type">
                     <Option value="Full Time">Full Time</Option>
                     <Option value="Part Time Visiting">Part Time Visiting</Option>
                     <Option value="Guest Faculty">Guest Faculty</Option>
@@ -754,7 +2054,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select Religion">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select Religion">
                     <Option value="Hinduism">Hinduism</Option>
                     <Option value="Islam">Islam</Option>
                     <Option value="Sikhism">Sikhism</Option>
@@ -779,7 +2079,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Select placeholder="Select State">  {/* onSelect={(e) => this.getUserList(e)}> */}
+                  <Select placeholder="Select State">
                     <Option value="Andhra Pradesh">Andhra Pradesh</Option>
                     <Option value="Arunachal Pradesh">Arunachal Pradesh</Option>
                     <Option value="Assam">Assam</Option>
@@ -863,7 +2163,7 @@ function Faculty() {
                     },
                   ]}
                 >
-                  <Switch defaultChecked={false} /> {/* onChange={onChange} /> */}
+                  <Switch defaultChecked={false} />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -1031,6 +2331,31 @@ function Faculty() {
             </Row>
           </Form>
         </Card>
+
+        <>
+          <div>
+            {window.innerWidth < 500 &&
+            <Table
+              bordered
+              dataSource={facultyOrUsersList}
+              columns={facultyOrUsersColumn}
+              size="middle"
+              pagination={true}
+              scroll={{ x: "1200vw", y: 600}}
+            />
+            }
+            {window.innerWidth > 500 &&
+            <Table
+              bordered
+              dataSource={facultyOrUsersList}
+              columns={facultyOrUsersColumn}
+              size="middle"
+              pagination={true}
+              scroll={{ x: "300vw", y: 600}}
+            />
+            }
+          </div>
+        </>
       </Spin>
     </div>
   );

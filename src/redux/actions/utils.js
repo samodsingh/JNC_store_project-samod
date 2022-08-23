@@ -1,4 +1,4 @@
-import { OPEN_DRAWER_BY_HAMBURGER, SHOW_HIDE_LOADER } from "../types";
+import { OPEN_DRAWER_BY_HAMBURGER, SHOW_HIDE_LOADER, SHOW_HIDE_MODAL } from "../types";
 
 export function showDrawerByHamburger(showDrawerFlag) {
   return {
@@ -12,4 +12,11 @@ export function showLoader(isShowLoader) {
     type: SHOW_HIDE_LOADER,
     payload: isShowLoader,
   }
+}
+
+export function showHideModal(flag) {
+  return {
+    type: SHOW_HIDE_MODAL,
+    payload: flag,
+  };
 }

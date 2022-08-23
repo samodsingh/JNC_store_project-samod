@@ -8,9 +8,13 @@ export const ROLE_VPDEAN = "ROLE_VPDEAN";
 
 export const NA = "NA";
 export const PAN_DOC = "PAN_DOC";
+export const PAN_DOC_MODAL = "PAN_DOC_MODAL";
 export const AADHAR_DOC = "AADHAR_DOC";
+export const AADHAR_DOC_MODAL = "AADHAR_DOC_MODAL";
 export const NET_QUALIFIED_CERT_DOC = "NET_QUALIFIED_CERT_DOC";
+export const NET_QUALIFIED_CERT_DOC_MODAL = "NET_QUALIFIED_CERT_DOC_MODAL";
 export const SLET_QUALIFIED_CERT_DOC = "SLET_QUALIFIED_CERT_DOC";
+export const SLET_QUALIFIED_CERT_DOC_MODAL = "SLET_QUALIFIED_CERT_DOC_MODAL";
 
 export const ACCESS_TOKEN = "accessToken";
 export const SUCCESS = "SUCCESS";
