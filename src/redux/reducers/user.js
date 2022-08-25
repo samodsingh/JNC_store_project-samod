@@ -10,12 +10,12 @@ const initialState = {
   isLoading: false,
   error: null,
   userDetail: undefined,
+  selectedFacultyUserForEdit: undefined,
   isAuthenticated: false,
   actionFromInsideApp: false,
-  usersList: [],
-  mydownlineUsersList: [],
-  treeCounts: undefined,
-  adminDashboardDetails: undefined,
+  modalVisibleState: false,
+  confirmEditProductLoadingState: false,
+  facultyOrUsersList: [],
 };
 
 export default function user(state = initialState, action) {
@@ -88,6 +88,81 @@ export default function user(state = initialState, action) {
       error: action.message,
     };
 
+  case type.UPDATE_FACULTY_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+
+  case type.UPDATE_FACULTY_SUCCESS: {
+    console.log("UPDATE_FACULTY_SUCCESS=== ", action.updatedUserData);
+    notification.success({
+      message: "JNC User Update Success",
+      description:
+          action.message || "Faculty (User) updated successfuly.",
+    });
+    const tempFacultyOrUsersList = state.facultyOrUsersList.map(fl => fl.id === action.updatedUserData.id ? action.updatedUserData : fl);
+    return {...state, ...{facultyOrUsersList: [...tempFacultyOrUsersList], isLoading: false } };
+    // return {...state, ...{facultyOrUsersList: [...state.facultyOrUsersList, action.updatedUserData], isLoading: false } };
+  }
+  case type.UPDATE_FACULTY_ERROR:
+    notification.error({
+      message: "JNC User Update Error",
+      description:
+          action.message || "Faculty (User) update failed.",
+    });
+    return {
+      ...state,
+      isLoading: false,
+      error: action.message,
+    };
+
+  case type.ADD_FACULTY_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+
+  case type.ADD_FACULTY_SUCCESS:
+    notification.success({
+      message: "JNC User Add Success",
+      description:
+          action.message || "Faculty (User) added successfuly.",
+    });
+    return {...state, ...{facultyOrUsersList: [...state.facultyOrUsersList, action.newAddedUserData], isLoading: false } };
+    
+  case type.ADD_FACULTY_ERROR:
+    notification.error({
+      message: "JNC User Add Error",
+      description:
+          action.message || "Faculty (User) careate failed.",
+    });
+    return {
+      ...state,
+      isLoading: false,
+      error: action.message,
+    };
+
+  case type.GET_ALL_FACULTY_OR_USER_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+  
+  case type.GET_ALL_FACULTY_OR_USER_SUCCESS:
+    return {
+      ...state,
+      isLoading: false,
+      facultyOrUsersList: action.facultyOrUsersList,
+    };
+      
+  case type.GET_ALL_FACULTY_OR_USER_ERROR:
+    return {
+      ...state,
+      isLoading: false,
+      error: action.message,
+    };
+
   case type.USER_LOGOUT_REQ:
     return {
       ...state,
@@ -111,6 +186,12 @@ export default function user(state = initialState, action) {
       ...state,
       isLoading: false,
       error: action.message,
+    };
+
+  case type.SET_SELECTED_FACULTY_USER_FOR_EDIT:
+    return {
+      ...state,
+      selectedFacultyUserForEdit: action.payload,
     };
 
   default:

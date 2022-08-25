@@ -1,0 +1,59 @@
+.content-container {
+  max-width: 85vw;
+}
+
+.ant-card-bordered {
+  border: 2px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.divider-thickness {
+  border-top: 2px solid #d9d9d9;
+}
+
+.mis-form-item {
+  margin: 0.75rem 1rem;
+}
+
+.mis-date-picker {
+  width: 100%;
+}
+
+.submit-form-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen-main-item span {
+  color: #810000;
+}
+
+.ant-modal-title {
+  color: #810000;
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+
+.mis-modal {
+  width: 50vw !important;
+}
+
+@media screen and (max-width: 1024px) {
+  .content-container {
+    max-width: 75vw;
+  }
+  .mis-modal {
+    width: 100vw !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .content-container {
+    max-width: 95vw;
+  }
+  .mis-modal {
+    width: 100vw !important;
+  }
+}

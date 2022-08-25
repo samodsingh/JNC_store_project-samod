@@ -9,7 +9,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #882737;
+    background-color: #810000;
     /* z-index: 1000; */
     /* opacity: 0.9; */
   }
@@ -41,7 +41,7 @@
   }
 
   .logo img{
-    width: 70px;
+    width: 90px;
     margin-left: 30px;
   }
 
@@ -88,18 +88,11 @@
   text-transform: uppercase;
 }
 .container-btn{
-  width: 180px;
-  height: 100px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-weight: bold;
-  background-color: #ecb338;  margin: 0px 30px 0 0;
-  color: #685617;
+  background-color: #810000;  margin: 0px 30px 0 0;
+  color: #fff;
+  font-size: x-large;
+  font-weight: 900;
   cursor: pointer;
-}
-
-.container-btn a {
-  color: #882637;
 }
   /* Menu---------------------- */
   .two:hover ~ .hr-sytle {

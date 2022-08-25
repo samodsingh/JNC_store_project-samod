@@ -3,6 +3,7 @@ import * as type from "../types";
 const initialState = {
   showDrawerFlag: false,
   isLoading: false,
+  modalVisibleState: false,
 };
 
 export default function showDrawerByHamburger(state = initialState, action) {
@@ -17,6 +18,11 @@ export default function showDrawerByHamburger(state = initialState, action) {
       ...state,
       isLoading: action.payload,
     }
+  case type.SHOW_HIDE_MODAL:
+    return {
+      ...state,
+      modalVisibleState: action.payload,
+    };
   default:
     return state;
   }
