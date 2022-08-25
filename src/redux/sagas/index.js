@@ -1,6 +1,6 @@
 import { all } from "redux-saga/effects";
 import { getAllDepartmentsSaga } from "./departmentSaga";
-import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, addFacultyUserSaga, getAllFacultyOrUserSaga } from "./userSaga";
+import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga } from "./userSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -9,7 +9,8 @@ export default function* rootSaga() {
     userLogoutSaga(),
     getCurrentUserSaga(),
     getAllDepartmentsSaga(),
-    addFacultyUserSaga(),
+    addNewFacultyUserSaga(),
     getAllFacultyOrUserSaga(),
+    updateFacultyUserSaga(),
   ])
 }

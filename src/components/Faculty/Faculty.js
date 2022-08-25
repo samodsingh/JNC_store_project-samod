@@ -16,7 +16,7 @@ import {
 import "./Faculty.css";
 import { getAllDepartments } from "../../redux/actions/department";
 import { AADHAR_DOC, AADHAR_DOC_MODAL, ACCESS_TOKEN, NA, NET_QUALIFIED_CERT_DOC, NET_QUALIFIED_CERT_DOC_MODAL, PAN_DOC, PAN_DOC_MODAL, SLET_QUALIFIED_CERT_DOC, SLET_QUALIFIED_CERT_DOC_MODAL } from "../../constants/constants";
-import { addFacultyUser, getAllFacultyOrUser, setSelectedFacultyUserForEdit } from "../../redux/actions/user";
+import { addFacultyUser, getAllFacultyOrUser, setSelectedFacultyUserForEdit, updateFacultyUser } from "../../redux/actions/user";
 import { showHideModal } from "../../redux/actions/utils";
 
 function Faculty() {
@@ -50,15 +50,15 @@ function Faculty() {
   const [defaultFileListNetQualifiedCertDoc, setDefaultFileListNetQualifiedCertDoc] = useState([]);
   const [defaultFileListNetQualifiedCertDocModal, setDefaultFileListNetQualifiedCertDocModal] = useState([]);
   const [defaultFileListSletQualifiedCertDoc, setDefaultFileListSletQualifiedCertDoc] = useState([]);
-  const isLoading = useSelector((state) => state.department.isLoading);
+  const [defaultFileListSletQualifiedCertDocModal, setDefaultFileListSletQualifiedCertDocModal] = useState([]);
+  const isLoading = useSelector((state) => state.user.isLoading);
   const departmentList = useSelector((state) => state.department.departmentList);
   const facultyOrUsersList = useSelector((state) => state.user.facultyOrUsersList);
   const confirmEditFacultyUserLoadingState = useSelector((state) => state.user.confirmEditFacultyUserLoadingState);
   const selectedFacultyUserForEdit = useSelector((state) => state.user.selectedFacultyUserForEdit);
 
-  console.log("facultyOrUsersList---------", facultyOrUsersList);
-  console.log("dddd---------", facultyOrUsersList.map(fac => fac.firstName));
-  
+  // console.log("facultyOrUsersList---------", facultyOrUsersList);
+
   const layout = {
     labelCol: {
       span: 24,
@@ -73,15 +73,50 @@ function Faculty() {
 
   const showModalAndEdit = (record) => {
     console.log("for edit, record--", record);
-    console.log("isPhyChallenged, record--", record.isPhyChallenged);
-    console.log("isDoctorate, record--", record.isDoctorate);
-    console.log("isSLETCleared, record--", record.isSLETCleared);
-    console.log("isNETQualified, record--", record.isNETQualified);
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyUserForEdit(record));
     setPanDocUploadIdModal(record && record.panDoc && record.panDoc.id);
     setAadharDocUploadIdModal(record && record.aadhaarDoc && record.aadhaarDoc.id);
+    setNetQualifiedCertDocUploadIdModal(record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.id)
+    setSletQualifiedCertDocUploadIdModal(record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.id)
 
+    setDefaultFileListPanDocModal([
+      {
+        uid: record && record.panDoc && record.panDoc.id,
+        name: "uploadedPanDoc",
+        status: "done",
+        url: record && record.panDoc && record.panDoc.docUrl,
+      },
+    ]);
+    
+    setDefaultFileListAadharDocModal([
+      {
+        uid: record && record.aadhaarDoc && record.aadhaarDoc.id,
+        name: "uploadedAadharDoc",
+        status: "done",
+        url: record && record.aadhaarDoc && record.aadhaarDoc.docUrl,
+      },
+    ]);
+
+    setShowSletCertUploadModal(record && record.isSLETCleared);
+    setDefaultFileListNetQualifiedCertDocModal([
+      {
+        uid: record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.id,
+        name: "uploadedNetQualifiedCertificateDoc",
+        status: "done",
+        url: record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl,
+      },
+    ]);
+    setShowNetCertUploadModal(record && record.isNETQualified);
+    setDefaultFileListSletQualifiedCertDocModal([
+      {
+        uid: record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.id,
+        name: "uploadedSletQualifiedCertificateDoc",
+        status: "done",
+        url: record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl,
+      },
+    ]);
+    console.log("annnnnnn--------", record);
     formModal.setFieldsValue({
       firstNameModal: record && record.firstName,
       middleNameModal: record && record.middleName,
@@ -98,7 +133,7 @@ function Faculty() {
       roleModal: record && record.role && record.role.map(r => r.role),
       joiningDateModal: record && record.joiningDate && moment(record.joiningDate),
       designationModal: record && record.designation,
-      // departmentIdModal: record && record.departmentIdModal,
+      belongToDepartmentIdModal: record && record.belongToDepartment && record.belongToDepartment.id,
       postalCodeModal: record && record.postalCode,
       cityOrVillModal: record && record.cityOrVill,
       addressLine2Modal: record && record.addressLine2,
@@ -115,39 +150,116 @@ function Faculty() {
       religionModal: record && record.religion,
       sletQualifiedYearModal: record && record.sletQualifiedYear,
       netQualifiedYearModal: record && record.netQualifiedYear,
-      sletQualifiedCertificateDocIdModal: record && record.sletQualifiedCertificateDocId,
-      netQualifiedCertificateDocIdModal: record && record.netQualifiedCertificateDocId,
-
-      
+      sletQualifiedCertificateDocIdModal: record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.id,
+      netQualifiedCertificateDocIdModal: record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.id,
     });
   };
 
   const updateFacultyUserInformation = (values, userId) => {
-    console.log("modal=== ", values, userId);
-    console.log("setPanDocUploadIdModal=== ", panDocUploadIdModal);
-    console.log("setAadharDocUploadIdModal=== ", aadharDocUploadIdModal);
+    console.log("vefore modal=== ", values, userId);
+    let updatedValues = {userId: userId};
 
-    values.netQualifiedCertificateDocId = netQualifiedCertDocUploadIdModal;
-    values.sletQualifiedCertificateDocId = sletQualifiedCertDocUploadIdModal;
+    updatedValues.aadhaarDocId = aadharDocUploadIdModal;
+    updatedValues.panDocId = panDocUploadIdModal;
+    updatedValues.netQualifiedCertificateDocId = netQualifiedCertDocUploadIdModal;
+    updatedValues.sletQualifiedCertificateDocId = sletQualifiedCertDocUploadIdModal;
 
-    // console.log("values-----", values);
-    // formModal.validateFields(
-    //   ["firstNameModal", "middleNameModal", "lastNameModal"],
-    //   (err, values) => { // the rest remains the same...
-    //     if (!err) {
-    //     }
-    //   }
-    // );
+    updatedValues.isDoctorate = values.isDoctorateModal ? true : false;
+    updatedValues.isNETQualified = values.isNETQualifiedModal ? true : false;
+    updatedValues.isPhyChallenged = values.isPhyChallengedModal ? true : false;
+    updatedValues.isSLETCleared = values.isSLETClearedModal ? true : false;
 
-    // dispatch(
-    //   editModalProducts({
-    //     id: userId,
-    //     productDesc: values.productDescModal,
-    //     productImageId: productImageUploadId,
-    //     productPrice: values.productPriceModal,
-    //     productTitle: values.productTitleModal,
-    //   })
-    // );
+    updatedValues.birthDate = values.birthDateModal ? values.birthDateModal.format("YYYY-MM-DD") : null;
+    updatedValues.joiningDate = values.joiningDateModal ? values.joiningDateModal.format("YYYY-MM-DD") : null;
+    updatedValues.leavingDate = values.leavingDateModal ? values.leavingDateModal.format("YYYY-MM-DD") : null;
+
+    
+    if(values.isNETQualifiedModal) {
+      if(values.netQualifiedCertificateDocIdModal === -1 || values.netQualifiedCertificateDocIdModal === undefined || values.netQualifiedCertificateDocIdModal === null) {
+        notification.error({
+          message: "JNC Mandatory Upload Error",
+          description: "Please upload NET Qualified Certificate.",
+        });
+        return;
+      }
+    }
+
+    if(values.isSLETClearedModal) {
+      if(values.sletQualifiedCertificateDocIdModal === -1 || values.sletQualifiedCertificateDocIdModal === undefined || values.sletQualifiedCertificateDocIdModal === null) {
+        notification.error({
+          message: "JNC Mandatory Upload Error",
+          description: "Please upload SLET Qualified Certificate.",
+        });
+        return;
+      }
+    }
+
+    if(values.isNETQualifiedModal) {
+      if(values.netQualifiedYearModal === undefined || values.netQualifiedYearModal === null || values.netQualifiedYearModal === NA) {
+        notification.error({
+          message: "JNC Mandatory field Error",
+          description: "Please Input NET Qualified Year.",
+        });
+        return;
+      }
+    }
+
+    if(values.isSLETClearedModal) {
+      if(values.sletQualifiedYearModal === undefined || values.sletQualifiedYearModal === null || values.sletQualifiedYearModal === NA) {
+        notification.error({
+          message: "JNC Mandatory field Error",
+          description: "Please Input SLET Qualified Year.",
+        });
+        return;
+      }
+    }
+
+    updatedValues.netQualifiedYear = values.netQualifiedYearModal ? values.netQualifiedYearModal : NA;
+    updatedValues.sletQualifiedYear = values.sletQualifiedYearModal ? values.sletQualifiedYearModal : NA;
+
+    updatedValues.role = values.roleModal;
+    updatedValues.mobile = values.mobileModal;
+    updatedValues.firstName = values.firstNameModal;
+    updatedValues.middleName = values.middleNameModal;
+    updatedValues.surName = values.surNameModal;
+    updatedValues.gender = values.genderModal;
+    updatedValues.fatherName = values.fatherNameModal;
+    updatedValues.motherName = values.motherNameModal;
+    updatedValues.pan = values.panModal;
+    updatedValues.aadhaar = values.aadhaarModal;
+    updatedValues.designation = values.designationModal;
+    updatedValues.addressLine1 = values.addressLine1Modal;
+    updatedValues.addressLine2 = values.addressLine2Modal;
+    updatedValues.postalCode = values.postalCodeModal;
+    updatedValues.cityOrVill = values.cityOrVillModal;
+    updatedValues.state = values.stateModal;
+    updatedValues.religion = values.religionModal;
+    updatedValues.caste = values.casteModal;
+    updatedValues.engagementType = values.engagementTypeModal;
+    updatedValues.belongToDepartmentId = values.belongToDepartmentIdModal;
+
+    console.log("updatedValues before just update submit----- ", updatedValues);
+
+    dispatch(updateFacultyUser(updatedValues));
+
+    dispatch(showHideModal(false));
+    
+    
+    setShowNetCertUploadModal(false);
+    setShowSletCertUploadModal(false);
+    setProgressPanDocUploadModal(0);
+    setProgressAadharDocUploadModal(0);
+    setProgressNetQualifiedCertDocUploadModel(0);
+    setProgressSletQualifiedCertDocUploadModal(0);
+    setNetQualifiedCertDocUploadIdModal(-1);
+    setSletQualifiedCertDocUploadIdModal(-1);
+    setDefaultFileListPanDocModal([]);
+    setDefaultFileListAadharDocModal([]);
+    setDefaultFileListNetQualifiedCertDocModal([]);
+    setDefaultFileListSletQualifiedCertDocModal([]);
+    
+    dispatch(setSelectedFacultyUserForEdit(undefined));
+    formModal.resetFields();
   };
 
   const cancleModal = () => {
@@ -263,6 +375,7 @@ function Faculty() {
     {
       title: "First Name",
       dataIndex: "firstName",
+      key: "firstName",
       width: "15%",
       filters: facultyOrUsersList.map(fac => { return {text: fac.firstName, value: fac.firstName} }), 
       onFilter: (value, record) => record.firstName.indexOf(value) === 0,
@@ -270,31 +383,37 @@ function Faculty() {
     },
     {
       title: "Middle Name",
+      key: "middleName",
       dataIndex: "middleName",
       width: "10%",
     },
     {
       title: "Surname",
+      key: "surName",
       dataIndex: "surName",
       width: "10%",
     },
     {
       title: "Gender",
+      key: "gender",
       dataIndex: "gender",
       width: "10%",
     },
     {
       title: "Father Name",
+      key: "fatherName",
       dataIndex: "fatherName",
       width: "10%",
     },
     {
       title: "Mother Name",
+      key: "motherName",
       dataIndex: "motherName",
       width: "10%",
     },
     {
       title: "Birth Date",
+      key: "birthDate",
       dataIndex: "birthDate",
       width: "10%",
       render: (_, record) => {
@@ -307,80 +426,91 @@ function Faculty() {
     },
     {
       title: "Mobile No.",
+      key: "mobile",
       dataIndex: "mobile",
       width: "10%",
     },
     {
       title: "PAN",
+      key: "pan",
       dataIndex: "pan",
       width: "10%",
     },
     {
       title: "PAN Doc.",
+      key: "panDoc",
       dataIndex: "panDoc",
       width: "10%",
       render: (_, record) => {
         return (
           <>
-            <a href={
-              record &&
+            {record && record.panDoc === null || record.panDoc === undefined ? <span>NA</span> :
+              <a href={
+                record &&
                 record.panDoc &&
                 record.panDoc.docUrl
-            } download target="_blank" rel="noopener noreferrer">
+              } download target="_blank" rel="noopener noreferrer">
 
-              {record && record.panDoc && record.panDoc.docUrl &&
+                {record && record.panDoc && record.panDoc.docUrl &&
                 record.panDoc.docUrl.includes(".pdf") ? 
-                <embed width="140" height="100" src={record && record.panDoc && record.panDoc.docUrl} type="application/pdf"></embed>
-                : <img src={ record && record.panDoc && record.panDoc.docUrl }
-                  height={50}
-                  width={50}
-                  alt="PAN Doc"
-                />
-              }
-            </a>
+                  <embed width="140" height="100" src={record && record.panDoc && record.panDoc.docUrl} type="application/pdf"></embed>
+                  : <img src={ record && record.panDoc && record.panDoc.docUrl }
+                    height={50}
+                    width={50}
+                    alt="PAN Doc"
+                  />
+                }
+              </a>
+            }
           </>
         );
       },
     },
     {
       title: "Aadhar",
+      key: "aadhaar",
       dataIndex: "aadhaar",
       width: "10%",
     },
     {
       title: "Aadhar Doc.",
+      key: "aadhaarDoc",
       dataIndex: "aadhaarDoc",
       width: "10%",
       render: (_, record) => {
         return (
           <>
-            <a href={
-              record &&
+            {record && record.aadhaarDoc === null || record.aadhaarDoc === undefined ? <span>NA</span> :
+              <a href={
+                record &&
                 record.aadhaarDoc &&
                 record.aadhaarDoc.docUrl
-            } download target="_blank" rel="noopener noreferrer">
+              } download target="_blank" rel="noopener noreferrer">
 
-              {record && record.aadhaarDoc && record.aadhaarDoc.docUrl &&
+                {record && record.aadhaarDoc && record.aadhaarDoc.docUrl &&
                 record.aadhaarDoc.docUrl.includes(".pdf") ? 
-                <embed width="140" height="100" src={record && record.aadhaarDoc && record.aadhaarDoc.docUrl} type="application/pdf"></embed>
-                : <img src={ record && record.aadhaarDoc && record.aadhaarDoc.docUrl }
-                  height={50}
-                  width={50}
-                  alt="Aadhar Doc"
-                />
-              }
-            </a>
+                  <embed width="140" height="100" src={record && record.aadhaarDoc && record.aadhaarDoc.docUrl} type="application/pdf"></embed>
+                  : <img src={ record && record.aadhaarDoc && record.aadhaarDoc.docUrl }
+                    height={50}
+                    width={50}
+                    alt="Aadhar Doc"
+                  />
+                }
+              </a>
+            }
           </>
         );
       },
     },
     {
       title: "E-Mail",
+      key: "username",
       dataIndex: "username",
       width: "10%",
     },
     {
       title: "Roles",
+      key: "role",
       dataIndex: "role",
       width: "10%",
       render: (_, record) => {
@@ -393,6 +523,7 @@ function Faculty() {
     },
     {
       title: "Joining Date",
+      key: "joiningDate",
       dataIndex: "joiningDate",
       width: "10%",
       render: (_, record) => {
@@ -405,16 +536,26 @@ function Faculty() {
     },
     {
       title: "Designation",
+      key: "designation",
       dataIndex: "designation",
       width: "10%",
     },
     {
       title: "Department",
-      dataIndex: "department",
+      key: "belongToDepartment",
+      dataIndex: "belongToDepartment",
       width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.belongToDepartment && record.belongToDepartment.departmentName }</span>
+          </>
+        );
+      },
     },
     {
       title: "Physically Challenged",
+      key: "isPhyChallenged",
       dataIndex: "isPhyChallenged",
       width: "10%",
       render: (_, record) => {
@@ -427,41 +568,49 @@ function Faculty() {
     },
     {
       title: "Type",
+      key: "engagementType",
       dataIndex: "engagementType",
       width: "10%",
     },
     {
       title: "Address Line 1",
+      key: "addressLine1",
       dataIndex: "addressLine1",
       width: "10%",
     },
     {
       title: "Address Line 2",
+      key: "addressLine2",
       dataIndex: "addressLine2",
       width: "10%",
     },
     {
       title: "City/Village",
+      key: "cityOrVill",
       dataIndex: "cityOrVill",
       width: "10%",
     },
     {
       title: "Postal Code",
+      key: "postalCode",
       dataIndex: "postalCode",
       width: "10%",
     },
     {
       title: "Religion",
+      key: "religion",
       dataIndex: "religion",
       width: "10%",
     },
     {
       title: "State",
+      key: "state",
       dataIndex: "state",
       width: "10%",
     },
     {
       title: "Date of Leaving",
+      key: "leavingDate",
       dataIndex: "leavingDate",
       width: "10%",
       render: (_, record) => {
@@ -474,11 +623,13 @@ function Faculty() {
     },
     {
       title: "Caste",
+      key: "caste",
       dataIndex: "caste",
       width: "10%",
     },
     {
       title: "Is Doctorate",
+      key: "isDoctorate",
       dataIndex: "isDoctorate",
       width: "10%",
       render: (_, record) => {
@@ -491,6 +642,7 @@ function Faculty() {
     },
     {
       title: "Is NET Qualified",
+      key: "isNETQualified",
       dataIndex: "isNETQualified",
       width: "10%",
       render: (_, record) => {
@@ -503,39 +655,44 @@ function Faculty() {
     },
     {
       title: "NET Qualified Certificate",
+      key: "netQualifiedCertificateDoc",
       dataIndex: "netQualifiedCertificateDoc",
       width: "10%",
       render: (_, record) => {
         return (
           <>
-            <a href={
-              record &&
+            {record && record.netQualifiedCertificateDoc === null || record.netQualifiedCertificateDoc === undefined ? <span>NA</span> :
+              <a href={
+                record &&
                 record.netQualifiedCertificateDoc &&
                 record.netQualifiedCertificateDoc.docUrl
-            } download target="_blank" rel="noopener noreferrer">
+              } download target="_blank" rel="noopener noreferrer">
 
-              {record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl &&
+                {record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl &&
                 record.netQualifiedCertificateDoc.docUrl.includes(".pdf") ? 
-                <embed width="140" height="100" src={record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
-                : <img src={ record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl }
-                  height={50}
-                  width={50}
-                  alt="NET Doc"
-                />
-              }
-            </a>
+                  <embed width="140" height="100" src={record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
+                  : <img src={ record && record.netQualifiedCertificateDoc && record.netQualifiedCertificateDoc.docUrl }
+                    height={50}
+                    width={50}
+                    alt="NET Doc"
+                  />
+                }
+              </a>
+            }
           </>
         );
       },
     },
     {
       title: "NET Qualified Year",
+      key: "netQualifiedYear",
       dataIndex: "netQualifiedYear",
       width: "10%",
     },
 
     {
       title: "Is SLET Cleared",
+      key: "isSLETCleared",
       dataIndex: "isSLETCleared",
       width: "10%",
       render: (_, record) => {
@@ -548,38 +705,43 @@ function Faculty() {
     },
     {
       title: "SLET Qualified Certificate",
+      key: "sletQualifiedCertificateDoc",
       dataIndex: "sletQualifiedCertificateDoc",
       width: "10%",
       render: (_, record) => {
         return (
           <>
-            <a href={
-              record &&
+            {record && record.sletQualifiedCertificateDoc === null || record.sletQualifiedCertificateDoc === undefined ? <span>NA</span> :
+              <a href={
+                record &&
                 record.sletQualifiedCertificateDoc &&
                 record.sletQualifiedCertificateDoc.docUrl
-            } download target="_blank" rel="noopener noreferrer">
+              } download target="_blank" rel="noopener noreferrer">
 
-              {record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl &&
+                {record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl &&
                 record.sletQualifiedCertificateDoc.docUrl.includes(".pdf") ? 
-                <embed width="140" height="100" src={record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
-                : <img src={ record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl }
-                  height={50}
-                  width={50}
-                  alt="SLET Doc"
-                />
-              }
-            </a>
+                  <embed width="140" height="100" src={record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl} type="application/pdf"></embed>
+                  : <img src={ record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl }
+                    height={50}
+                    width={50}
+                    alt="SLET Doc"
+                  />
+                }
+              </a>
+            }
           </>
         );
       },
     },
     {
       title: "SLET Qualified Year",
+      key: "sletQualifiedYear",
       dataIndex: "sletQualifiedYear",
       width: "10%",
     },
     {
       title: "Edit",
+      key: "edit",
       dataIndex: "edit",
       width: "5%",
       render: (_, record) => {
@@ -630,7 +792,8 @@ function Faculty() {
                       rules={[
                         {
                           required: true,
-                          message: "Please Input First Name",
+                          message: "Please Input Valid First Name",
+                          min: 3
                         },
                       ]}
                     >
@@ -662,7 +825,7 @@ function Faculty() {
                       rules={[
                         {
                           required: true,
-                          message: "Please Input Surname",
+                          message: "Please Input Valid Surname",
                         },
                       ]}
                     >
@@ -698,6 +861,7 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Father Name",
+                          min: 3
                         },
                       ]}
                     >
@@ -713,6 +877,7 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Mother Name",
+                          min: 3
                         },
                       ]}
                     >
@@ -772,6 +937,14 @@ function Faculty() {
                           required: true,
                           message: "Please Input PAN",
                         },
+                        {
+                          max: 10,
+                          message: "Please input max 10 digits PAN.",
+                        },
+                        {
+                          min: 10,
+                          message: "Please input min 10 digits PAN.",
+                        },
                       ]}
                     >
                       <Input type="text" placeholder="PAN" />
@@ -786,6 +959,15 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Aadhaar",
+                          pattern: /^(?:\d*)$/,
+                        },
+                        {
+                          max: 12,
+                          message: "Please input max 12 digits Aadhaar.",
+                        },
+                        {
+                          min: 12,
+                          message: "Please input min 12 digits Aadhaar.",
                         },
                       ]}
                     >
@@ -931,6 +1113,7 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Designation",
+                          min: 2
                         },
                       ]}
                     >
@@ -940,7 +1123,7 @@ function Faculty() {
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
-                      name="departmentIdModal"
+                      name="belongToDepartmentIdModal"
                       label="Department"
                       rules={[
                         {
@@ -963,6 +1146,7 @@ function Faculty() {
                       className="mis-form-item"
                       name="isPhyChallengedModal"
                       label="Is Physically Challenged"
+                      valuePropName="checked"
                       rules={[
                         {
                           required: false,
@@ -1002,6 +1186,7 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Address",
+                          min: 5
                         },
                       ]}
                     >
@@ -1033,6 +1218,7 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input City/Village",
+                          min: 3,
                         },
                       ]}
                     >
@@ -1048,6 +1234,15 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Postal Code",
+                          pattern: /^(?:\d*)$/,
+                        },
+                        {
+                          max: 6,
+                          message: "Please input max 6 Postal Code.",
+                        },
+                        {
+                          min: 6,
+                          message: "Please input min 6 Postal Code.",
                         },
                       ]}
                     >
@@ -1159,6 +1354,7 @@ function Faculty() {
                         {
                           required: true,
                           message: "Please Input Caste",
+                          min: 3
                         },
                       ]}
                     >
@@ -1172,6 +1368,7 @@ function Faculty() {
                       className="mis-form-item"
                       name="isDoctorateModal"
                       label="Is Doctorate"
+                      valuePropName="checked"
                       rules={[
                         {
                           required: false,
@@ -1191,6 +1388,7 @@ function Faculty() {
                       className="mis-form-item"
                       name="isNETQualifiedModal"
                       label="Is NET Qualified"
+                      valuePropName="checked"
                       rules={[
                         {
                           required: false,
@@ -1205,6 +1403,7 @@ function Faculty() {
                       className="mis-form-item"
                       name="isSLETClearedModal"
                       label="Is SLET Cleared"
+                      valuePropName="checked"
                       rules={[
                         {
                           required: false,
@@ -1215,47 +1414,6 @@ function Faculty() {
                     </Form.Item>
                   </Col>
                 </Row>
-                {/* <Row>
-                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                    <Form.Item
-                      className="mis-form-item"
-                      name="panDocIdModal"
-                      label="PAN Upload"
-                      rules={[
-                        {
-                          required: false,
-                          message: "Please Upload PAN",
-                        },
-                      ]}
-                    >
-                      <div className="container">
-                        <Upload
-                          accept=".pdf,image/*"
-                          customRequest={(event) =>
-                            uploadImage(event, PAN_DOC_MODAL)
-                          }
-                          listType="picture-card"
-                          onChange={onChangePanDocModal}
-                          onPreview={onPreview}
-                          fileList={defaultFileListPanDocModal}
-                          className="image-upload-grid"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please Upload PAN",
-                            },
-                          ]}
-                        >
-                          {defaultFileListPanDocModal.length < 1 &&
-                                "Upload PAN"}
-                        </Upload>
-                        {progressPanDocUploadModal > 0 ? (
-                          <Progress percent={progressPanDocUploadModal} />
-                        ) : null}
-                      </div>
-                    </Form.Item>
-                  </Col>
-                  </Row> */}
                 <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     {showNetCertUploadModal &&
@@ -1334,9 +1492,9 @@ function Faculty() {
                             uploadImage(event, SLET_QUALIFIED_CERT_DOC_MODAL)
                           }
                           listType="picture-card"
-                          onChange={onChangeSletQualifiedCertDoc}
+                          onChange={onChangeSletQualifiedCertDocModal}
                           onPreview={onPreview}
-                          fileList={defaultFileListSletQualifiedCertDoc}
+                          fileList={defaultFileListSletQualifiedCertDocModal}
                           className="image-upload-grid"
                           rules={[
                             {
@@ -1344,7 +1502,7 @@ function Faculty() {
                             },
                           ]}
                         >
-                          {defaultFileListSletQualifiedCertDoc.length < 1 &&
+                          {defaultFileListSletQualifiedCertDocModal.length < 1 &&
                             "Upload SLET Certificate"}
                         </Upload>
                         {progressSletQualifiedCertDocUploadModal > 0 ? (
@@ -1446,9 +1604,6 @@ function Faculty() {
     values.netQualifiedYear = values.netQualifiedYear ? values.netQualifiedYear : NA;
     values.sletQualifiedYear = values.sletQualifiedYear ? values.sletQualifiedYear : NA;
 
-    
-
-    console.log(values);
     dispatch(addFacultyUser(values));
 
     setShowNetCertUpload(false);
@@ -1476,6 +1631,7 @@ function Faculty() {
     setDefaultFileListNetQualifiedCertDoc([]);
     setDefaultFileListNetQualifiedCertDocModal([]);
     setDefaultFileListSletQualifiedCertDoc([]);
+    setDefaultFileListSletQualifiedCertDocModal([]);
     form.resetFields();
   };
 
@@ -1509,9 +1665,8 @@ function Faculty() {
   };
 
   const onChangeIsSLETClearedModal = (checked) => {
-    console.log("checked=== ", checked);
     setShowSletCertUploadModal(checked);
-    // setDefaultFileListSletQualifiedCertDoc([]);
+    setDefaultFileListSletQualifiedCertDocModal([]);
     if(!checked) {
       setSletQualifiedCertDocUploadIdModal(-1);
     }
@@ -1619,6 +1774,7 @@ function Faculty() {
       } else if (type === SLET_QUALIFIED_CERT_DOC) {
         setSletQualifiedCertDocUploadId(res.data.data.id);
       } else if (type === SLET_QUALIFIED_CERT_DOC_MODAL) {
+        console.log("SLET_QUALIFIED_CERT_DOC_MODAL==== ", res.data.data.id);
         setSletQualifiedCertDocUploadIdModal(res.data.data.id);
       }
 
@@ -1660,6 +1816,9 @@ function Faculty() {
   const onChangeSletQualifiedCertDoc = ({ fileList: newFileList }) => {
     setDefaultFileListSletQualifiedCertDoc(newFileList);
   };
+  const onChangeSletQualifiedCertDocModal = ({ fileList: newFileList }) => {
+    setDefaultFileListSletQualifiedCertDocModal(newFileList);
+  };
 
   const handleRoleSelection = (value) => {
     console.log("selected role- ", value);
@@ -1677,7 +1836,6 @@ function Faculty() {
         <Card className="card-main-form">
           <PageHeader title="Add Faculty (User)" className="screen-main-item animated bounce" />
           <Divider className="divider-thickness" />
-               
           <Form
             form={form}
             {...layout}
@@ -1694,6 +1852,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input First Name",
+                      min: 3
                     },
                   ]}
                 >
@@ -1726,6 +1885,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Surname",
+                      min: 3
                     },
                   ]}
                 >
@@ -1761,6 +1921,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Father Name",
+                      min: 3
                     },
                   ]}
                 >
@@ -1776,6 +1937,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Mother Name",
+                      min: 3
                     },
                   ]}
                 >
@@ -1835,6 +1997,14 @@ function Faculty() {
                       required: true,
                       message: "Please Input PAN",
                     },
+                    {
+                      max: 10,
+                      message: "Please input max 10 digits PAN.",
+                    },
+                    {
+                      min: 10,
+                      message: "Please input min 10 digits PAN.",
+                    },
                   ]}
                 >
                   <Input type="text" placeholder="PAN" />
@@ -1848,7 +2018,16 @@ function Faculty() {
                   rules={[
                     {
                       required: true,
-                      message: "Please Input Aadhaar",
+                      message: "Please Input Aadhaar.",
+                      pattern: /^(?:\d*)$/,
+                    },
+                    {
+                      max: 12,
+                      message: "Please input max 12 digits aadhar.",
+                    },
+                    {
+                      min: 12,
+                      message: "Please input min 12 digits aadhar.",
                     },
                   ]}
                 >
@@ -1961,6 +2140,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Password",
+                      min: 8
                     },
                   ]}
                 >
@@ -2027,6 +2207,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Designation",
+                      min: 3
                     },
                   ]}
                 >
@@ -2036,7 +2217,7 @@ function Faculty() {
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
-                  name="departmentId"
+                  name="belongToDepartmentId"
                   label="Department"
                   rules={[
                     {
@@ -2059,6 +2240,7 @@ function Faculty() {
                   className="mis-form-item"
                   name="isPhyChallenged"
                   label="Is Physically Challenged"
+                  valuePropName="checked"
                   rules={[
                     {
                       required: false,
@@ -2098,6 +2280,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Address",
+                      min: 3
                     },
                   ]}
                 >
@@ -2129,6 +2312,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input City/Village",
+                      min: 3
                     },
                   ]}
                 >
@@ -2144,6 +2328,15 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Postal Code",
+                      pattern: /^(?:\d*)$/,
+                    },
+                    {
+                      max: 6,
+                      message: "Please input max 6 digits Postal Code.",
+                    },
+                    {
+                      min: 6,
+                      message: "Please input min 6 digits Postal Code.",
                     },
                   ]}
                 >
@@ -2254,6 +2447,7 @@ function Faculty() {
                     {
                       required: true,
                       message: "Please Input Caste",
+                      min: 3
                     },
                   ]}
                 >
@@ -2267,6 +2461,7 @@ function Faculty() {
                   className="mis-form-item"
                   name="isDoctorate"
                   label="Is Doctorate"
+                  valuePropName="checked"
                   rules={[
                     {
                       required: false,
@@ -2286,6 +2481,7 @@ function Faculty() {
                   className="mis-form-item"
                   name="isNETQualified"
                   label="Is NET Qualified"
+                  valuePropName="checked"
                   rules={[
                     {
                       required: false,
@@ -2300,6 +2496,7 @@ function Faculty() {
                   className="mis-form-item"
                   name="isSLETCleared"
                   label="Is SLET Cleared"
+                  valuePropName="checked"
                   rules={[
                     {
                       required: false,

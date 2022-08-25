@@ -53,7 +53,7 @@ const Navigationbar = () => {
       <div className="logo">
         <a href="/">
           {" "}
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo" width={"90px"} height={"100px"} />
         </a>
       </div>
       <nav className="navigation">

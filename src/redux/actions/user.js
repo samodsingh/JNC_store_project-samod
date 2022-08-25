@@ -34,6 +34,13 @@ export function addFacultyUser(faculty) {
   }
 }
 
+export function updateFacultyUser(faculty) {
+  return {
+    type: type.UPDATE_FACULTY_REQ,
+    payload: faculty,
+  }
+}
+
 export function getAllFacultyOrUser() {
   return {
     type: type.GET_ALL_FACULTY_OR_USER_REQ,

@@ -119,7 +119,8 @@ export function* getCurrentUserSaga() {
   yield takeEvery(types.GET_CURRENT_USER_REQ, getCurrentUserAction);
 }
 
-function addFacultyUserApi(payload) {
+
+function addNewFacultyUserApi(payload) {
   return axios
     .post(`${process.env.REACT_APP_API_URL}/api/user`, payload, {
       withCredentials: true,
@@ -137,7 +138,7 @@ function addFacultyUserApi(payload) {
 }
 function* addFacultyUserAction(action) {
   try {
-    const res = yield call(addFacultyUserApi, action.payload);
+    const res = yield call(addNewFacultyUserApi, action.payload);
     console.log("res add faculty------", res);
     if (res.success) {
       yield put({
@@ -158,8 +159,52 @@ function* addFacultyUserAction(action) {
     });
   }
 }
-export function* addFacultyUserSaga() {
+export function* addNewFacultyUserSaga() {
   yield takeEvery(types.ADD_FACULTY_REQ, addFacultyUserAction);
+}
+
+
+function  updateExistingFacultyUserApi(payload) {
+  return axios
+    .put(`${process.env.REACT_APP_API_URL}/api/user/${payload.userId}`, payload, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("accessToken"),
+      },
+    })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* updateFacultyUserAction(action) {
+  try {
+    const res = yield call(updateExistingFacultyUserApi, action.payload);
+    console.log("res add faculty------", res);
+    if (res.success) {
+      yield put({
+        type: types.UPDATE_FACULTY_SUCCESS,
+        updatedUserData: res.data,
+        message: res.message || "Faculty (User) has been updated successfully.",
+      });
+    } else {
+      yield put({
+        type: types.UPDATE_FACULTY_ERROR,
+        message: res.message || "Error in updating faculty, please try after sometime.",
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.UPDATE_FACULTY_ERROR,
+      message: "Error in updating faculty, please try after sometime.",
+    });
+  }
+}
+export function* updateFacultyUserSaga() {
+  yield takeEvery(types.UPDATE_FACULTY_REQ, updateFacultyUserAction);
 }
 
 
