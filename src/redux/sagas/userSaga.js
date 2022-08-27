@@ -139,7 +139,6 @@ function addNewFacultyUserApi(payload) {
 function* addFacultyUserAction(action) {
   try {
     const res = yield call(addNewFacultyUserApi, action.payload);
-    console.log("res add faculty------", res);
     if (res.success) {
       yield put({
         type: types.ADD_FACULTY_SUCCESS,
@@ -183,7 +182,6 @@ function  updateExistingFacultyUserApi(payload) {
 function* updateFacultyUserAction(action) {
   try {
     const res = yield call(updateExistingFacultyUserApi, action.payload);
-    console.log("res add faculty------", res);
     if (res.success) {
       yield put({
         type: types.UPDATE_FACULTY_SUCCESS,

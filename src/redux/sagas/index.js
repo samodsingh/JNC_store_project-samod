@@ -1,5 +1,5 @@
 import { all } from "redux-saga/effects";
-import { getAllDepartmentsSaga } from "./departmentSaga";
+import { addNewDepartmentSaga, getAllDepartmentsSaga, updateDepartmentSaga } from "./departmentSaga";
 import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga } from "./userSaga";
 
 export default function* rootSaga() {
@@ -12,5 +12,7 @@ export default function* rootSaga() {
     addNewFacultyUserSaga(),
     getAllFacultyOrUserSaga(),
     updateFacultyUserSaga(),
+    addNewDepartmentSaga(),
+    updateDepartmentSaga(),
   ])
 }
