@@ -68,10 +68,7 @@ export default function department(state = initialState, action) {
       description:
           action.message || "Department updated successfully.",
     });
-    console.log("action.updatedDepartmentData.---------", action.updatedDepartmentData);
-    // return {...state, ...{departmentList: [...state.departmentList, action.newAddedDepartmentData], isLoading: false } };
     const tempDepartmentList = state.departmentList.map(dept => dept.id === action.updatedDepartmentData.id ? action.updatedDepartmentData : dept);
-    console.log("state mutation-----------", {...state, ...{departmentList: tempDepartmentList, isLoading: false } });
     return {...state, ...{departmentList: tempDepartmentList, isLoading: false } };
   }
   case type.UPDATE_DEPT_ERROR:

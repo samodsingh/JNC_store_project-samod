@@ -19,7 +19,8 @@ function Department() {
 
   const [selectedDeptId, setSelectedDeptId] = useState(-1);
 
-  const isLoading = useSelector((state) => state.department.isLoading);
+  const isLoadingDept = useSelector((state) => state.department.isLoading);
+  const isLoadingUser = useSelector((state) => state.user.isLoading);
   const facultyOrUsersList = useSelector((state) => state.user.facultyOrUsersList);
   const departmentList = useSelector((state) => state.department.departmentList);
   const modalVisibleState = useSelector((state) => state.utils.modalVisibleState);
@@ -338,7 +339,7 @@ function Department() {
 
   return (
     <div className="content-container">
-      <Spin size="large" spinning={isLoading}>
+      <Spin size="large" spinning={isLoadingDept || isLoadingUser }>
         <Card className="card-main-form">
           <PageHeader title="Add Department" className="screen-main-item animated bounce" />
           <Divider className="divider-thickness" />
