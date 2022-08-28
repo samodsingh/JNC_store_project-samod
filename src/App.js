@@ -16,6 +16,7 @@ import Login from "./components/Login/Login";
 import { getCurrentLoggedinUser } from "./redux/actions/user";
 import Department from "./components/Department/Department";
 import Faculty from "./components/Faculty/Faculty";
+import Course from "./components/Course/Course";
 // import { ROLE_ADMIN } from "./constants/constants";
 
 
@@ -42,7 +43,16 @@ function App() {
           )}
           <Content>
             <Routes>
-              <Route path="/" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  user && isUserAuthenticated ? (
+                    <Dashboard />
+                  ) : (
+                    <Login />
+                  )
+                }
+              />
               <Route path="/about-us" element={<>about component</>} />
               <Route path="/contact-us" element={<>contact component</>} />
               <Route path="/login" element={<Login />} />
@@ -62,7 +72,7 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/department" element={<Department />} />
                   <Route path="/programme" element={<>programme</>} />
-                  <Route path="/course" element={<>course</>} />
+                  <Route path="/course" element={<Course />} />
                   <Route path="/user" element={<Faculty />} />
                   <Route path="/faculty-qualification" element={<>faculty-qualification</>} />
                   <Route path="/faculty-experience" element={<>faculty-experience</>} />
