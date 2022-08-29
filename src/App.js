@@ -17,6 +17,7 @@ import { getCurrentLoggedinUser } from "./redux/actions/user";
 import Department from "./components/Department/Department";
 import Faculty from "./components/Faculty/Faculty";
 import Course from "./components/Course/Course";
+import Collaboration from "./components/Collaboration/Collaboration";
 // import { ROLE_ADMIN } from "./constants/constants";
 
 
@@ -80,6 +81,7 @@ function App() {
                   <Route path="/activity" element={<>activity</>} />
                   <Route path="/fest-competitions-exhibitions" element={<>Fest / Competitions / Exhibitions</>} />
                   <Route path="/field-trip" element={<>Field trip</>} />
+                  <Route path="/collaboration" element={<Collaboration />} />
                   <Route path="/password-management" element={<>password-management</>} />
                 </>
               )}

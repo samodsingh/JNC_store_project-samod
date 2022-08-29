@@ -4,6 +4,7 @@ import utils from "./utils";
 import department from "./department";
 import programme from "./programme";
 import course from "./course";
+import collaboration from "./collaboration";
 
 const rootReducer = combineReducers({
   user: user,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   department: department,
   programme: programme,
   course: course,
+  collaboration: collaboration,
 });
 
 
