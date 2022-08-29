@@ -1,0 +1,33 @@
+.footer {
+  background-color: #882737;
+  position: relative;
+  width: 100%;
+  bottom: 0;
+  color: #fff;
+}
+
+.college_logo {
+  width: 90px;
+  margin-left: 40px;
+}
+
+.demo_pic {
+  width: 80px;
+  height: 100px;
+}
+
+.footer_icons span {
+  display: inline-block;
+  width: 60px;
+  font-size: 20px;
+  text-align: center;
+  color: white;
+}
+
+.footer_headings{
+  color: #fff;
+}
+
+.footer_role_list{
+ display: inline-grid;
+}
