@@ -177,6 +177,9 @@ function SidebarLG() {
               <Menu.Item key="/field-trip" icon={<CarFilled />}>
                 <Link to="/field-trip">Field trip</Link>
               </Menu.Item>
+              <Menu.Item key="/collaboration" icon={<UserSwitchOutlined />}>
+                <Link to="/collaboration">Collaboration</Link>
+              </Menu.Item>
 
               <Menu.Item key="/password-management" icon={<KeyOutlined />}>
                 <Link to="/password-management">Password Manage</Link>

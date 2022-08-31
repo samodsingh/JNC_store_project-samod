@@ -4,6 +4,7 @@ const initialState = {
   showDrawerFlag: false,
   isLoading: false,
   modalVisibleState: false,
+  selectedItemForEdit: {},
 };
 
 export default function showDrawerByHamburger(state = initialState, action) {
@@ -22,6 +23,11 @@ export default function showDrawerByHamburger(state = initialState, action) {
     return {
       ...state,
       modalVisibleState: action.payload,
+    };
+  case type.SELECT_ITEM_FOR_EDIT:
+    return {
+      ...state,
+      selectedItemForEdit: action.payload,
     };
   default:
     return state;

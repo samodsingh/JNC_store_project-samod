@@ -71,7 +71,7 @@ function SidebarSmallScreen() {
             {/* {user && user.roles === ROLE_ADMIN && ( */}
             <>
               <Menu.Item key="/dashboard" icon={<DashboardFilled />}>
-                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/dashboard" onClick={onClose}>Dashboard</Link>
               </Menu.Item>
               <SubMenu
                 key="product"
@@ -79,28 +79,31 @@ function SidebarSmallScreen() {
                 title="Master"
               >
                 <Menu.Item key="/department" >
-                  <Link to="/department">Department</Link>
+                  <Link to="/department" onClick={onClose}>Department</Link>
                 </Menu.Item>
                 <Menu.Item key="/programme">
-                  <Link to="/programme">Programme</Link>
+                  <Link to="/programme" onClick={onClose}>Programme</Link>
                 </Menu.Item>
                 <Menu.Item key="/course">
-                  <Link to="/course">Course</Link>
+                  <Link to="/course" onClick={onClose}>Course</Link>
                 </Menu.Item>
                 <Menu.Item key="/user">
-                  <Link to="/user">Faculty</Link>
+                  <Link to="/user" onClick={onClose}>Faculty</Link>
                 </Menu.Item>
               </SubMenu>
 
               <Menu.Item key="/faculty-qualification" icon={<AppstoreOutlined />}>
-                <Link to="/faculty-qualification">Faculty Qualification</Link>
+                <Link to="/faculty-qualification" onClick={onClose}>Faculty Qualification</Link>
               </Menu.Item>
               <Menu.Item key="/faculty-experience" icon={<SubnodeOutlined />}>
-                <Link to="/faculty-experience">Faculty Experience</Link>
+                <Link to="/faculty-experience" onClick={onClose}>Faculty Experience</Link>
+              </Menu.Item>
+              <Menu.Item key="/collaboration" icon={<UserSwitchOutlined />}>
+                <Link to="/collaboration" onClick={onClose}>Collaboration</Link>
               </Menu.Item>
 
               <Menu.Item key="/password-management" icon={<KeyOutlined />}>
-                <Link to="/password-management">Password Management</Link>
+                <Link to="/password-management" onClick={onClose}>Password Management</Link>
               </Menu.Item>
             </>
             {/* )} */}

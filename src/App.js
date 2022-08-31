@@ -16,6 +16,8 @@ import Login from "./components/Login/Login";
 import { getCurrentLoggedinUser } from "./redux/actions/user";
 import Department from "./components/Department/Department";
 import Faculty from "./components/Faculty/Faculty";
+import Course from "./components/Course/Course";
+import Collaboration from "./components/Collaboration/Collaboration";
 import Footer from "./components/Footer/footer";
 import Faculty_qualification from "./components/Faculty_QF/Faculty_Qf";
 // import { ROLE_ADMIN } from "./constants/constants";
@@ -44,7 +46,16 @@ function App() {
           )}
           <Content>
             <Routes>
-              <Route path="/" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  user && isUserAuthenticated ? (
+                    <Dashboard />
+                  ) : (
+                    <Login />
+                  )
+                }
+              />
               <Route path="/about-us" element={<>about component</>} />
               <Route path="/contact-us" element={<>contact component</>} />
               <Route path="/login" element={<Login />} />
@@ -64,7 +75,7 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/department" element={<Department />} />
                   <Route path="/programme" element={<>programme</>} />
-                  <Route path="/course" element={<>course</>} />
+                  <Route path="/course" element={<Course />} />
                   <Route path="/user" element={<Faculty />} />
                   <Route path="/faculty-qualification" element={<Faculty_qualification />} />
                   <Route path="/faculty-experience" element={<>faculty-experience</>} />
@@ -72,6 +83,7 @@ function App() {
                   <Route path="/activity" element={<>activity</>} />
                   <Route path="/fest-competitions-exhibitions" element={<>Fest / Competitions / Exhibitions</>} />
                   <Route path="/field-trip" element={<>Field trip</>} />
+                  <Route path="/collaboration" element={<Collaboration />} />
                   <Route path="/password-management" element={<>password-management</>} />
                 </>
               )}

@@ -8,10 +8,7 @@ import { Modal, Table, Form, Input, Button, PageHeader, Spin, Card, Row, Col, Di
 const { TextArea } = Input;
 const { Option } = Select;
 
-import {
-  EditOutlined,
-  // SearchOutlined,
-} from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 
 import "./Faculty.css";
 import { getAllDepartments } from "../../redux/actions/department";
@@ -57,8 +54,6 @@ function Faculty() {
   const confirmEditFacultyUserLoadingState = useSelector((state) => state.user.confirmEditFacultyUserLoadingState);
   const selectedFacultyUserForEdit = useSelector((state) => state.user.selectedFacultyUserForEdit);
 
-  // console.log("facultyOrUsersList---------", facultyOrUsersList);
-
   const layout = {
     labelCol: {
       span: 24,
@@ -69,10 +64,8 @@ function Faculty() {
   };
   
   const modalVisibleState = useSelector((state) => state.utils.modalVisibleState);
-  // console.log("modalVisibleState---------", modalVisibleState);
 
   const showModalAndEdit = (record) => {
-    console.log("for edit, record--", record);
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyUserForEdit(record));
     setPanDocUploadIdModal(record && record.panDoc && record.panDoc.id);
@@ -116,7 +109,7 @@ function Faculty() {
         url: record && record.sletQualifiedCertificateDoc && record.sletQualifiedCertificateDoc.docUrl,
       },
     ]);
-    console.log("annnnnnn--------", record);
+    
     formModal.setFieldsValue({
       firstNameModal: record && record.firstName,
       middleNameModal: record && record.middleName,
@@ -156,7 +149,6 @@ function Faculty() {
   };
 
   const updateFacultyUserInformation = (values, userId) => {
-    console.log("vefore modal=== ", values, userId);
     let updatedValues = {userId: userId};
 
     updatedValues.aadhaarDocId = aadharDocUploadIdModal;
@@ -237,8 +229,6 @@ function Faculty() {
     updatedValues.caste = values.casteModal;
     updatedValues.engagementType = values.engagementTypeModal;
     updatedValues.belongToDepartmentId = values.belongToDepartmentIdModal;
-
-    console.log("updatedValues before just update submit----- ", updatedValues);
 
     dispatch(updateFacultyUser(updatedValues));
 
@@ -1542,13 +1532,6 @@ function Faculty() {
   ]
 
   const onFinish = (values) => {
-    // form.validateFields(["sletQualifiedYear", "sletQualifiedCertificateDocId", "netQualifiedYear", "netQualifiedCertificateDocId", "isSLETCleared", "isNETQualified", "isDoctorate", "caste", "leavingDate", "state", "religion", "postalCode", "cityOrVill", "addressLine2", "addressLine1", "engagementType", "isPhyChallenged", "departmentId", "designation", "joiningDate", "role", "username", "aadhaarDocId", "panDocId", "aadhaar", "pan", "mobile", "birthDate", "motherName", "fatherName", "gender", "surName", "middleName", "firstName"], 
-    //   (err, values) => { // the rest remains the same...
-    //     if (!err) {
-    //       console.log(values);
-    //     }
-    //   }
-    // );
     values.aadhaarDocId = aadharDocUploadId;
     values.panDocId = panDocUploadId;
     values.netQualifiedCertificateDocId = netQualifiedCertDocUploadId;
@@ -1648,7 +1631,6 @@ function Faculty() {
   };
 
   const onChangeIsNETQualifiedModal = (checked) => {
-    console.log("checked=== ", checked);
     setShowNetCertUploadModal(checked);
     setDefaultFileListNetQualifiedCertDocModal([]);
     if(!checked) {
@@ -1752,7 +1734,6 @@ function Faculty() {
     try {
       previousDocId = type === PAN_DOC ? panDocUploadId : type === AADHAR_DOC ? aadharDocUploadId : type === NET_QUALIFIED_CERT_DOC ? netQualifiedCertDocUploadId : type === NET_QUALIFIED_CERT_DOC_MODAL ? netQualifiedCertDocUploadIdModal : type === SLET_QUALIFIED_CERT_DOC ? sletQualifiedCertDocUploadId : type === SLET_QUALIFIED_CERT_DOC_MODAL ? sletQualifiedCertDocUploadIdModal : type === PAN_DOC_MODAL ? panDocUploadIdModal : type === AADHAR_DOC_MODAL ? aadharDocUploadIdModal : -1;
 
-      console.log("previousDocId==== ", previousDocId);
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/upload/${previousDocId}`, // trying to send previous documentId
         fmData,
@@ -1774,7 +1755,6 @@ function Faculty() {
       } else if (type === SLET_QUALIFIED_CERT_DOC) {
         setSletQualifiedCertDocUploadId(res.data.data.id);
       } else if (type === SLET_QUALIFIED_CERT_DOC_MODAL) {
-        console.log("SLET_QUALIFIED_CERT_DOC_MODAL==== ", res.data.data.id);
         setSletQualifiedCertDocUploadIdModal(res.data.data.id);
       }
 
