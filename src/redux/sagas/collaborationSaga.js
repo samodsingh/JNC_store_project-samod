@@ -155,3 +155,48 @@ function* getAllCollaborationTypeAction() {
 export function* getAllCollaborationTypeSaga() {
   yield takeEvery(types.GET_ALL_COLLABORATION_REQ, getAllCollaborationTypeAction);
 }
+
+
+function updateCollaborationApi(payload) {
+  console.log("before collaboration id api call---", payload.collaborationId);
+  return axios
+    .put(`${process.env.REACT_APP_API_URL}/api/collaboration/${payload.collaborationId}`, payload.updatedCollaboration, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("accessToken"),
+      },
+    })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* updateCollaborationAction(action) {
+  try {
+    const res = yield call(updateCollaborationApi, action.payload);
+    console.log("res update collaboration------", res);
+    if (res.success) {
+      yield put({
+        type: types.UPDATE_COLLABORATION_SUCCESS,
+        updatedCollaborationData: res.data,
+        message: res.message || "Collaboration has been updated successfully.",
+      });
+    } else {
+      yield put({
+        type: types.UPDATE_COLLABORATION_ERROR,
+        message: res.message || "Error in updating collaboration, please try after sometime.",
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.UPDATE_COLLABORATION_ERROR,
+      message: "Error in updating collaboration, please try after sometime.",
+    });
+  }
+}
+export function* updateCollaborationSaga() {
+  yield takeEvery(types.UPDATE_COLLABORATION_REQ, updateCollaborationAction);
+}

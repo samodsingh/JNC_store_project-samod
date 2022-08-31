@@ -106,7 +106,32 @@ export default function collaboration(state = initialState, action) {
     return {
       ...state,
       isLoading: false,
-    };    
+    };
+
+  case type.UPDATE_COLLABORATION_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+  case type.UPDATE_COLLABORATION_SUCCESS: {
+    notification.success({
+      message: "JNC Update Collaboration Success",
+      description:
+          action.message || "Collaboration updated successfully.",
+    });
+    const tempCollaborationList = state.collaborationList.map(co => co.id === action.updatedCollaborationData.id ? action.updatedCollaborationData : co);
+    return {...state, ...{collaborationList: tempCollaborationList, isLoading: false } };
+  }
+  case type.UPDATE_COLLABORATION_ERROR:
+    notification.error({
+      message: "JNC Update Collaboration Error",
+      description:
+          action.message || "Collaboration update failed, please try after sometime.",
+    });
+    return {
+      ...state,
+      isLoading: false,
+    };  
 
   default:
     return state;
