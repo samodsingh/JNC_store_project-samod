@@ -39,3 +39,92 @@ function* getAllDepartmentsAction() {
 export function* getAllDepartmentsSaga() {
   yield takeEvery(types.GET_ALL_DEPT_REQ, getAllDepartmentsAction);
 }
+
+function addNewDepartmentApi(payload) {
+  return axios
+    .post(`${process.env.REACT_APP_API_URL}/api/department`, payload, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("accessToken"),
+      },
+    })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* addNewDepartmentAction(action) {
+  try {
+    const res = yield call(addNewDepartmentApi, action.payload);
+    if (res.success) {
+      yield put({
+        type: types.ADD_DEPT_SUCCESS,
+        newAddedDepartmentData: res.data,
+        message: res.message || "Department has been saved.",
+      });
+    } else {
+      yield put({
+        type: types.ADD_DEPT_ERROR,
+        message: res.message || "Error in adding department, please try after sometime.",
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.ADD_DEPT_ERROR,
+      message: "Error in adding department, please try after sometime.",
+    });
+  }
+}
+export function* addNewDepartmentSaga() {
+  yield takeEvery(types.ADD_DEPT_REQ, addNewDepartmentAction);
+}
+
+function updateDepartmentApi(payload) {
+  console.log("before api call---", payload.updatedDepartment);
+  return axios
+    .put(`${process.env.REACT_APP_API_URL}/api/department/${payload.deptId}`, payload.updatedDepartment, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("accessToken"),
+      },
+    })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* updateDepartmentAction(action) {
+  try {
+    const res = yield call(updateDepartmentApi, action.payload);
+    console.log("res update department------", res);
+    if (res.success) {
+      yield put({
+        type: types.UPDATE_DEPT_SUCCESS,
+        updatedDepartmentData: res.data,
+        message: res.message || "Department has been updated successfully.",
+      });
+    } else {
+      yield put({
+        type: types.UPDATE_DEPT_ERROR,
+        message: res.message || "Error in updating department, please try after sometime.",
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.UPDATE_DEPT_ERROR,
+      message: "Error in updating department, please try after sometime.",
+    });
+  }
+}
+export function* updateDepartmentSaga() {
+  yield takeEvery(types.UPDATE_DEPT_REQ, updateDepartmentAction);
+}
+
+
+
