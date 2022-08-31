@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Form, Input, Button, PageHeader, Spin, Card, Row, Col, Divider, Select, Table, Modal, Switch } from "antd";
@@ -23,10 +22,6 @@ function Course() {
   const programmeList = useSelector((state) => state.programme.programmeList);
   const courseList = useSelector((state) => state.course.courseList);
   const modalVisibleState = useSelector((state) => state.utils.modalVisibleState);
-  // const selectedItemForEdit = useSelector((state) => state.utils.selectedItemForEdit);
-
-  console.log("isLoadingCourse----", isLoadingCourse);
-  console.log("isLoadingProgramme----", isLoadingProgramme);
 
   const layout = {
     labelCol: {
@@ -39,14 +34,11 @@ function Course() {
 
   const onFinish = (values) => {
     values.isActive = values.isActive ? true : false;
-    
-    console.log("valll------------", values);
     dispatch(addNewCourse(values));
     form.resetFields();
   };
 
   const cancleModal = () => {
-    // dispatch(setSelectedItemForEdit(undefined));
     dispatch(showHideModal(false));
   };
 

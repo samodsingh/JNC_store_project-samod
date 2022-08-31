@@ -51,7 +51,7 @@ export default function department(state = initialState, action) {
     notification.error({
       message: "JNC Add Course Error",
       description:
-            action.message || "Courses add failed, please try after sometime.",
+            action.message || "Course add failed, please try after sometime.",
     });
     return {
       ...state,

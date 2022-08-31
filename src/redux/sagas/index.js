@@ -1,4 +1,5 @@
 import { all } from "redux-saga/effects";
+import { addNewCollaborationSaga, getAllCollaboratedAgencyTypeSaga, getAllCollaborationTypeSaga, getAllDepartmentFacilitySaga, updateCollaborationSaga } from "./collaborationSaga";
 import { addNewCourseSaga, getAllCourseSaga, updateCourseSaga } from "./courseSaga";
 import { addNewDepartmentSaga, getAllDepartmentsSaga, updateDepartmentSaga } from "./departmentSaga";
 import { getAllProgrammesSaga } from "./programmeSaga";
@@ -20,5 +21,10 @@ export default function* rootSaga() {
     getAllCourseSaga(),
     addNewCourseSaga(),
     updateCourseSaga(),
+    getAllCollaboratedAgencyTypeSaga(),
+    getAllDepartmentFacilitySaga(),
+    addNewCollaborationSaga(),
+    getAllCollaborationTypeSaga(),
+    updateCollaborationSaga(),
   ])
 }
