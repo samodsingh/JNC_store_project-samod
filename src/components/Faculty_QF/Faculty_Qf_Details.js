@@ -169,7 +169,7 @@ const Faculty_QF_Grid = () => {
       title: "Name of the degree",
       key: "degreeName",
       dataIndex: "degreeName",
-      width: "5%",
+      width: 100,
       filters: faculty_Qf_Data.map((f) => {
         return { text: f.degreeName, value: f.degreeName };
       }),
@@ -179,55 +179,55 @@ const Faculty_QF_Grid = () => {
       title: "Month and Year of Completion",
       key: "monthYearCompletion",
       dataIndex: "monthYearCompletion",
-      width: "5%",
+      width: 100,
     },
     {
       title: "Nature",
       key: "nature",
       dataIndex: "nature",
-      width: "5%",
+      width: 100,
     },
     {
       title: "Specialization",
       key: "specialization",
       dataIndex: "specialization",
-      width: "5%",
+      width: 100,
     },
     {
       title: "University",
       key: "university",
       dataIndex: "university",
-      width: "5%",
+      width: 100,
     },
     {
       title: "Institute Name",
       key: "instituteName",
       dataIndex: "instituteName",
-      width: "5%",
+      width: 100,
     },
     {
       title: "Percentage",
       key: "percentage",
       dataIndex: "percentage",
-      width: "5%",
+      width: 100,
     },
     {
       title: "State",
       key: "state",
       dataIndex: "state",
-      width: "5%",
+      width: 100,
     },
     {
       title: "Country",
       key: "country",
       dataIndex: "country",
-      width: "5%",
+      width: 100,
     },
     {
       title: "Qualification Certificate",
       key: "qualificationCertId",
       dataIndex: "qualificationCertId",
-      width: "5%",
+      width: 100,
 
       render: (_, record) => {
         return (
@@ -282,7 +282,7 @@ const Faculty_QF_Grid = () => {
       title: "Edit",
       key: "edit",
       dataIndex: "edit",
-      width: "3%",
+      width: 50,
       render: (_, record) => (
         <EditOutlined onClick={() => PopulateFacultyQfInModal(record)} />
       ),
@@ -881,18 +881,13 @@ const Faculty_QF_Grid = () => {
         </Form>
       </Modal>
       <Table
-        xs={24}
-        sm={24}
-        md={12}
-        lg={12}
-        xl={12}
         bordered
         className="table-striped-rows"
         size="middle"
         pagination={{
           position: "BottomRight",
         }}
-        scroll={{ x: "500vw", y: 600 }}
+        scroll={{ x: "200vw", y: 600 }}
         columns={facultyQf_Columns}
         dataSource={faculty_Qf_Data}
       />

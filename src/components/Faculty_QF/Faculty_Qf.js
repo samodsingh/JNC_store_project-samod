@@ -92,7 +92,7 @@ const Faculty_qualification = () => {
   };
 
   return (
-    <div className="content-container ">
+    <div className="content-container">
       <Spin size="large" spinning={isLoading}>
         <div className="site-card-border-less-wrapper-faculty">
           <Card

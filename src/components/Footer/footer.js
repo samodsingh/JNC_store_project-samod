@@ -29,7 +29,7 @@ const footer = () => {
           {user && isUserAuthenticated && (
             <div>
               <h3 className="footer_headings">USER INFO</h3>
-              <p>Name : {user.firstname} </p>
+              <p>Name : {user.firstName} </p>
               <p>Email : {user.username}</p>
               <p>
                 Role : 
