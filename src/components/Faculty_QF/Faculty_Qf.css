@@ -1,0 +1,30 @@
+.site-card-border-less-wrapper-faculty {
+  border: 2px solid rgb(197, 199, 197);
+  border-radius: 5px;
+  margin: 100px auto;
+  max-width: 1000px;
+  text-align: center;
+}
+
+.btn_faculty_submit {
+  display: flex;
+  text-align: center;
+  justify-content: right;
+  width: 100%;
+}
+
+.input_item {
+  margin: 0.75rem 1rem;
+}
+
+.ant-form-item-explain-error {
+  text-align: right;
+  font-size: 12px;
+}
+
+.table-striped-rows tr:nth-child(2n) td {
+  background-color: rgb(197, 199, 197);
+}
+.table-striped-rows thead {
+  background-color: #f1f1f1;
+}

@@ -18,6 +18,8 @@ import Department from "./components/Department/Department";
 import Faculty from "./components/Faculty/Faculty";
 import Course from "./components/Course/Course";
 import Collaboration from "./components/Collaboration/Collaboration";
+import Footer from "./components/Footer/footer";
+import Faculty_qualification from "./components/Faculty_QF/Faculty_Qf";
 // import { ROLE_ADMIN } from "./constants/constants";
 
 
@@ -75,7 +77,7 @@ function App() {
                   <Route path="/programme" element={<>programme</>} />
                   <Route path="/course" element={<Course />} />
                   <Route path="/user" element={<Faculty />} />
-                  <Route path="/faculty-qualification" element={<>faculty-qualification</>} />
+                  <Route path="/faculty-qualification" element={<Faculty_qualification />} />
                   <Route path="/faculty-experience" element={<>faculty-experience</>} />
                   <Route path="/event" element={<>event page</>} />
                   <Route path="/activity" element={<>activity</>} />
@@ -90,6 +92,7 @@ function App() {
             </Routes>
           </Content>
         </Layout>
+        <Footer />
       </Router>
     </Layout>
   );
