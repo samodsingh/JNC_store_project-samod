@@ -3,7 +3,7 @@ import { addNewCollaborationSaga, getAllCollaboratedAgencyTypeSaga, getAllCollab
 import { addNewCourseSaga, getAllCourseSagaback, getAllCourseTypeSaga, getAllPreRequisiteSaga, updateCourseSaga } from "./courseSaga";
 import { addNewDepartmentSaga, getAllDepartmentsSaga, updateDepartmentSaga } from "./departmentSaga";
 import { getAllProgrammesSaga } from "./programmeSaga";
-import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga } from "./userSaga";
+import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga, getAllDesignationsSaga } from "./userSaga";
 import { addFacultyQfSaga, getFacultyQfSaga, updateFacultyQfSaga } from "./facultyQualificationSaga"
 
 export default function* rootSaga() {
@@ -32,5 +32,6 @@ export default function* rootSaga() {
     updateFacultyQfSaga(),
     getAllCourseTypeSaga(),
     getAllPreRequisiteSaga(),
+    getAllDesignationsSaga(),
   ])
 }
