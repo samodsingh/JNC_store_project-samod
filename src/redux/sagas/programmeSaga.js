@@ -21,7 +21,6 @@ function getAllProgrammesApi() {
 function* getAllProgrammesAction() {
   try {
     const res = yield call(getAllProgrammesApi);
-    console.log("res---", res);
     if (res.success) {
       yield put({
         type: types.GET_ALL_PROGRAMME_SUCCESS,
@@ -39,7 +38,6 @@ function* getAllProgrammesAction() {
   }
 }
 export function* getAllProgrammesSaga() {
-  console.log("inside saga----------------------");
   yield takeEvery(types.GET_ALL_PROGRAMME_REQ, getAllProgrammesAction);
 }
 

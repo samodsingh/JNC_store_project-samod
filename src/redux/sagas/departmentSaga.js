@@ -83,7 +83,6 @@ export function* addNewDepartmentSaga() {
 }
 
 function updateDepartmentApi(payload) {
-  console.log("before api call---", payload.updatedDepartment);
   return axios
     .put(`${process.env.REACT_APP_API_URL}/api/department/${payload.deptId}`, payload.updatedDepartment, {
       withCredentials: true,
@@ -102,7 +101,6 @@ function updateDepartmentApi(payload) {
 function* updateDepartmentAction(action) {
   try {
     const res = yield call(updateDepartmentApi, action.payload);
-    console.log("res update department------", res);
     if (res.success) {
       yield put({
         type: types.UPDATE_DEPT_SUCCESS,

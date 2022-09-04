@@ -8,7 +8,7 @@ import { EditOutlined } from "@ant-design/icons";
 import "./Course.css";
 import { showHideModal } from "../../redux/actions/utils";
 import { getAllProgrammes } from "../../redux/actions/programme";
-import { addNewCourse, getAllCourse, updateCourse } from "../../redux/actions/course";
+import { addNewCourse, getAllCourse, getAllCourseType, getAllPreRequisite, updateCourse } from "../../redux/actions/course";
 
 function Course() {
   const [form] = Form.useForm();
@@ -20,9 +20,11 @@ function Course() {
   const isLoadingCourse = useSelector((state) => state.course.isLoading);
   const isLoadingProgramme = useSelector((state) => state.programme.isLoading);
   const programmeList = useSelector((state) => state.programme.programmeList);
+  const courseTypeList = useSelector((state) => state.course.courseTypeList);
+  const preRequisiteList = useSelector((state) => state.course.preRequisiteList);
   const courseList = useSelector((state) => state.course.courseList);
   const modalVisibleState = useSelector((state) => state.utils.modalVisibleState);
-
+  
   const layout = {
     labelCol: {
       span: 24,
@@ -44,12 +46,11 @@ function Course() {
 
   const updateCourseInformation = (values) => {
     let updatedCourse = {};
-    // courseTitleModal programmeIdModal courseTypeModal preRequisiteModal natureModal creditsModal durationModal yearIntroductionModal yearRevisionModal isActiveModal
-
+    updatedCourse.courseCode = values.courseCodeModal;
     updatedCourse.courseTitle = values.courseTitleModal;
     updatedCourse.programmeId = values.programmeIdModal;
-    updatedCourse.courseType = values.courseTypeModal;
-    updatedCourse.preRequisite = values.preRequisiteModal;
+    updatedCourse.courseTypeId = values.courseTypeIdModal;
+    updatedCourse.prerequisiteIds = values.prerequisiteIdsModal;
     updatedCourse.nature = values.natureModal;
     updatedCourse.credits = values.creditsModal;
     updatedCourse.duration = values.durationModal;
@@ -62,15 +63,13 @@ function Course() {
   }
 
   const showModalAndEdit = (record) => {
-    console.log("sel rec --- ", record);
     setSelectedCourseId(record.id);
     dispatch(showHideModal(true));
-    // dispatch(setSelectedItemForEdit(record));
-
     formModal.setFieldsValue({
+      courseCodeModal: record && record.courseCode,
       courseTitleModal: record && record.courseTitle,
-      courseTypeModal: record && record.courseType,
-      preRequisiteModal: record && record.preRequisite,
+      courseTypeIdModal: record && record.courseType && record.courseType.id,
+      prerequisiteIdsModal: record && record.prerequisite && record.prerequisite.map(r => r.name),
       natureModal: record && record.nature && record.nature.split(","),
       creditsModal: record && record.credits.toString(),
       programmeIdModal: record && record.programme && record.programme.id,
@@ -82,8 +81,10 @@ function Course() {
   }
 
   useEffect(() => {
+    dispatch(getAllCourseType());
     dispatch(getAllProgrammes());
     dispatch(getAllCourse());
+    dispatch(getAllPreRequisite());
   }, [dispatch]);
 
   const courseColumn = [
@@ -118,7 +119,14 @@ function Course() {
       title: "Course Type",
       key: "courseType",
       dataIndex: "courseType",
-      width: "10%",
+      width: "20%",
+      render: (_, record) => {
+        return (
+          <>
+            <p>{record && record.courseType && record.courseType.type}</p>
+          </>
+        );
+      },
     },
     {
       title: "Create Date",
@@ -135,9 +143,16 @@ function Course() {
     },
     {
       title: "Pre-requisite",
-      key: "preRequisite",
-      dataIndex: "preRequisite",
+      key: "prepequisite",
+      dataIndex: "prepequisite",
       width: "20%",
+      render: (_, record) => {
+        return (
+          <>
+            <p>{record && record.prerequisite && record.prerequisite.map(r => <span key={r.id}>{r.name}, </span>)}</p>
+          </>
+        );
+      },
     },
     {
       title: "Type/Nature",
@@ -226,6 +241,22 @@ function Course() {
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
+                      name="courseCodeModal"
+                      label="Course Code"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please Input Course Code",
+                          min: 3
+                        },
+                      ]}
+                    >
+                      <Input type="text" placeholder="Course Code" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
                       name="courseTitleModal"
                       label="Course Title"
                       rules={[
@@ -239,6 +270,8 @@ function Course() {
                       <Input type="text" placeholder="Course Title" />
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -258,42 +291,63 @@ function Course() {
                       </Select>
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
-                      name="courseTypeModal"
+                      name="courseTypeIdModal"
                       label="Course Type"
                       rules={[
                         {
                           required: true,
-                          message: "Please Input Course Type",
-                          min: 5
+                          message: "Please select course yype.",
                         },
                       ]}
                     >
-                      <Input type="text" placeholder="Course Type" />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                    <Form.Item
-                      className="mis-form-item"
-                      name="preRequisiteModal"
-                      label="Pre-requisite"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please Input Pre-requisite",
-                          min: 5
-                        },
-                      ]}
-                    >
-                      <Input type="text" placeholder="Pre-requisite" />
+                      <Select placeholder="Select Course Type">
+                        {courseTypeList.map( ctl => (
+                          <Option key={ctl.id} value={ctl.id}>{`${ctl.type}`}</Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      className="mis-form-item"
+                      name="prerequisiteIdsModal"
+                      label="Pre-Requisite"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select Pre-requisite.",
+                        },
+                      ]}
+                    >
+                      <Select 
+                        mode="multiple"
+                        allowClear
+                        style={{
+                          width: "100%",
+                        }}
+                        placeholder="Select Pre-requisite">
+                        {preRequisiteList.map( ctl => (
+                          <Option key={ctl.id} value={ctl.id}>{`${ctl.name}`}</Option>
+                        ))}
+                      </Select>
+                      {/* <Select 
+                        mode="multiple"
+                        allowClear
+                        style={{
+                          width: "100%",
+                        }}
+                        placeholder="Select Pre-requisite">
+                        {preRequisiteList.map( pre => (
+                          <Option key={pre.id} value={pre.id}>{`${pre.name}`}</Option>
+                        ))}
+                      </Select> */}
+                    </Form.Item>
+                  </Col>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -322,6 +376,8 @@ function Course() {
                       </Select>
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -346,8 +402,6 @@ function Course() {
                       <Input type="text" placeholder="Credits" />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -372,6 +426,8 @@ function Course() {
                       <Input type="text" placeholder="Duration" />
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -396,8 +452,6 @@ function Course() {
                       <Input type="text" placeholder="Year of Introduction" />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -422,6 +476,8 @@ function Course() {
                       <Input type="text" placeholder="Year of Revision" />
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
@@ -462,6 +518,22 @@ function Course() {
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
+                  name="courseCode"
+                  label="Course Code"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Input Course Code",
+                      min: 3
+                    },
+                  ]}
+                >
+                  <Input type="text" placeholder="Course Code" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                <Form.Item
+                  className="mis-form-item"
                   name="courseTitle"
                   label="Course Title"
                   rules={[
@@ -475,6 +547,8 @@ function Course() {
                   <Input type="text" placeholder="Course Title" />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
@@ -494,42 +568,52 @@ function Course() {
                   </Select>
                 </Form.Item>
               </Col>
-            </Row>
-            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
-                  name="courseType"
+                  name="courseTypeId"
                   label="Course Type"
                   rules={[
                     {
                       required: true,
-                      message: "Please Input Course Type",
-                      min: 5
+                      message: "Please select course type.",
                     },
                   ]}
                 >
-                  <Input type="text" placeholder="Course Type" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                <Form.Item
-                  className="mis-form-item"
-                  name="preRequisite"
-                  label="Pre-requisite"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please Input Pre-requisite",
-                      min: 5
-                    },
-                  ]}
-                >
-                  <Input type="text" placeholder="Pre-requisite" />
+                  <Select placeholder="Select Course Type">
+                    {courseTypeList.map( ctl => (
+                      <Option key={ctl.id} value={ctl.id}>{`${ctl.type}`}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>
             <Row>
+              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                <Form.Item
+                  className="mis-form-item"
+                  name="prerequisiteIds"
+                  label="Pre-requisite"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Input Pre-requisite"
+                    },
+                  ]}
+                >
+                  <Select 
+                    mode="multiple"
+                    allowClear
+                    style={{
+                      width: "100%",
+                    }}
+                    placeholder="Select Pre-requisite">
+                    {preRequisiteList.map( ctl => (
+                      <Option key={ctl.id} value={ctl.id}>{`${ctl.name}`}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
@@ -558,6 +642,8 @@ function Course() {
                   </Select>
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
@@ -582,8 +668,6 @@ function Course() {
                   <Input type="text" placeholder="Credits" />
                 </Form.Item>
               </Col>
-            </Row>
-            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
@@ -608,6 +692,8 @@ function Course() {
                   <Input type="text" placeholder="Duration" />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
@@ -632,8 +718,6 @@ function Course() {
                   <Input type="text" placeholder="Year of Introduction" />
                 </Form.Item>
               </Col>
-            </Row>
-            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
@@ -658,6 +742,8 @@ function Course() {
                   <Input type="text" placeholder="Year of Revision" />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"

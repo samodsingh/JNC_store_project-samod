@@ -13,7 +13,7 @@ import { Row, Col, Divider } from "antd";
 import demo from "../../assets/images/demo.jpg";
 const footer = () => {
   const user = useSelector((state) => state.user.userDetail);
-  console.log(user);
+
   const isUserAuthenticated = useSelector(
     (state) => state.user.isUserAuthenticated
   );

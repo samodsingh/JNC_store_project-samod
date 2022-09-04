@@ -3,7 +3,44 @@ import { call, put, takeEvery } from "redux-saga/effects";
 import { httpHeaderConfig } from "../../constants/constants";
 import * as types from "../types";
 
-function getAllCourseApi() {
+function getAllCourseTypeApi() {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/api/course-type`,
+      { withCredentials: true },
+      httpHeaderConfig
+    )
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* getAllCourseTypeSagaAction() {
+  try {
+    const res = yield call(getAllCourseTypeApi);
+    if (res.success) {
+      yield put({
+        type: types.GET_ALL_COURSE_TYPE_SUCCESS,
+        courseTypeList: res.data,
+      });
+    } else {
+      yield put({
+        type: types.GET_ALL_COURSE_TYPE_ERROR,
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.GET_ALL_COURSE_TYPE_ERROR,
+    });
+  }
+}
+export function* getAllCourseTypeSaga() {
+  yield takeEvery(types.GET_ALL_COURSE_TYPE_RQ, getAllCourseTypeSagaAction);
+}
+
+function getAllCourseApiBack() {
   return axios
     .get(
       `${process.env.REACT_APP_API_URL}/api/courses`,
@@ -19,7 +56,7 @@ function getAllCourseApi() {
 }
 function* getAllCourseAction() {
   try {
-    const res = yield call(getAllCourseApi);
+    const res = yield call(getAllCourseApiBack);
     if (res.success) {
       yield put({
         type: types.GET_ALL_COURSE_SUCCESS,
@@ -36,8 +73,45 @@ function* getAllCourseAction() {
     });
   }
 }
-export function* getAllCourseSaga() {
+export function* getAllCourseSagaback() {
   yield takeEvery(types.GET_ALL_COURSE_REQ, getAllCourseAction);
+}
+
+function getAllPreRequisiteApi() {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/api/pre-requisite`,
+      { withCredentials: true },
+      httpHeaderConfig
+    )
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* getAllPreRequisiteAction() {
+  try {
+    const res = yield call(getAllPreRequisiteApi);
+    if (res.success) {
+      yield put({
+        type: types.GET_ALL_PRE_REQUISITE_SUCCESS,
+        preRequisiteList: res.data,
+      });
+    } else {
+      yield put({
+        type: types.GET_ALL_PRE_REQUISITE_ERROR,
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.GET_ALL_PRE_REQUISITE_ERROR,
+    });
+  }
+}
+export function* getAllPreRequisiteSaga() {
+  yield takeEvery(types.GET_ALL_PRE_REQUISITE_REQ, getAllPreRequisiteAction);
 }
 
 
@@ -84,7 +158,6 @@ export function* addNewCourseSaga() {
 }
 
 function updateCourseApi(payload) {
-  console.log("before api call---", payload.updatedCourse);
   return axios
     .put(`${process.env.REACT_APP_API_URL}/api/course/${payload.courseId}`, payload.updatedCourse, {
       withCredentials: true,
@@ -103,7 +176,6 @@ function updateCourseApi(payload) {
 function* updateCourseAction(action) {
   try {
     const res = yield call(updateCourseApi, action.payload);
-    console.log("res update Course------", res);
     if (res.success) {
       yield put({
         type: types.UPDATE_COURSE_SUCCESS,

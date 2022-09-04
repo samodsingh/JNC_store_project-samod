@@ -36,7 +36,7 @@ const Faculty_QF_Grid = () => {
     (state) => state.facultyQualification.facultyQf_List
   );
 
-  console.log(faculty_Qf_Data);
+
   const selectedFacultyQfForEdit = useSelector(
     (state) => state.facultyQualification.selectedFacultyQfForEdit
   );
@@ -87,7 +87,7 @@ const Faculty_QF_Grid = () => {
         FormData,
         config
       );
-      console.log(res);
+
       onSuccess("Ok");
       setCertificateUploadIdModal(res.data.id);
     } catch (err) {
@@ -95,7 +95,6 @@ const Faculty_QF_Grid = () => {
     }
   };
 
-  console.log(selectedFacultyQfForEdit);
   const user = useSelector((state) => state.user.userDetail);
 
   const dispatch = useDispatch();
@@ -109,7 +108,7 @@ const Faculty_QF_Grid = () => {
   const PopulateFacultyQfInModal = (record) => {
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyQfForEdit(record));
-    console.log(record);
+
     setCertificateUploadIdModal(
       record && record.qualificationCert && record.qualificationCert.id
     );
