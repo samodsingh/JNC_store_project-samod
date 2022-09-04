@@ -111,7 +111,7 @@ function* getAllPreRequisiteAction() {
   }
 }
 export function* getAllPreRequisiteSaga() {
-  yield takeEvery(types.GET_ALL_PRE_REQUISITE_REQ, getAllPreRequisiteAction);
+  yield takeEvery(types.GET_ALL_PRE_REQUISIT_REQ, getAllPreRequisiteAction);
 }
 
 

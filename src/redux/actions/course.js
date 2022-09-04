@@ -14,7 +14,7 @@ export function getAllCourse() {
 
 export function getAllPreRequisite() {
   return {
-    type: type.GET_ALL_PRE_REQUISITE_REQ,
+    type: type.GET_ALL_PRE_REQUISIT_REQ,
   }
 }
 

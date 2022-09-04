@@ -60,7 +60,7 @@ export default function course(state = initialState, action) {
       isLoading: false,
     };
 
-  case type.GET_ALL_PRE_REQUISITE_REQ:
+  case type.GET_ALL_PRE_REQUISIT_REQ:
     return {
       ...state,
       isLoading: true,
