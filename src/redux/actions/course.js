@@ -1,8 +1,20 @@
 import * as type from "../types";
 
+export function getAllCourseType() {
+  return {
+    type: type.GET_ALL_COURSE_TYPE_RQ,
+  }
+}
+
 export function getAllCourse() {
   return {
     type: type.GET_ALL_COURSE_REQ,
+  }
+}
+
+export function getAllPreRequisite() {
+  return {
+    type: type.GET_ALL_PRE_REQUISIT_REQ,
   }
 }
 

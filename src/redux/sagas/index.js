@@ -1,9 +1,9 @@
 import { all } from "redux-saga/effects";
 import { addNewCollaborationSaga, getAllCollaboratedAgencyTypeSaga, getAllCollaborationTypeSaga, getAllDepartmentFacilitySaga, updateCollaborationSaga } from "./collaborationSaga";
-import { addNewCourseSaga, getAllCourseSaga, updateCourseSaga } from "./courseSaga";
+import { addNewCourseSaga, getAllCourseSagaback, getAllCourseTypeSaga, getAllPreRequisiteSaga, updateCourseSaga } from "./courseSaga";
 import { addNewDepartmentSaga, getAllDepartmentsSaga, updateDepartmentSaga } from "./departmentSaga";
 import { getAllProgrammesSaga } from "./programmeSaga";
-import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga } from "./userSaga";
+import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga, getAllDesignationsSaga } from "./userSaga";
 import { addFacultyQfSaga, getAllDegreeTitlesSaga, getFacultyQfSaga, updateFacultyQfSaga } from "./facultyQualificationSaga"
 
 export default function* rootSaga() {
@@ -19,7 +19,7 @@ export default function* rootSaga() {
     addNewDepartmentSaga(),
     updateDepartmentSaga(),
     getAllProgrammesSaga(),
-    getAllCourseSaga(),
+    getAllCourseSagaback(),
     addNewCourseSaga(),
     updateCourseSaga(),
     getAllCollaboratedAgencyTypeSaga(),
@@ -30,6 +30,9 @@ export default function* rootSaga() {
     addFacultyQfSaga(),
     getFacultyQfSaga(),
     updateFacultyQfSaga(),
+    getAllCourseTypeSaga(),
+    getAllPreRequisiteSaga(),
+    getAllDesignationsSaga(),
     getAllDegreeTitlesSaga(),
   ])
 }

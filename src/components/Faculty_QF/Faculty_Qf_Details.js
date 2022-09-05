@@ -97,7 +97,7 @@ const Faculty_QF_Grid = () => {
         FormData,
         config
       );
-      console.log(res);
+
       onSuccess("Ok");
       setCertificateUploadIdModal(res.data.id);
     } catch (err) {
@@ -111,7 +111,7 @@ const Faculty_QF_Grid = () => {
   const PopulateFacultyQfInModal = (record) => {
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyQfForEdit(record));
-    console.log(record);
+
     setCertificateUploadIdModal(
       record && record.qualificationCert && record.qualificationCert.id
     );

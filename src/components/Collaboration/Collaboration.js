@@ -38,10 +38,6 @@ function Collaboration() {
   const collaborationList = useSelector((state) => state.collaboration.collaborationList);
   const modalVisibleState = useSelector((state) => state.utils.modalVisibleState);
 
-
-
-  console.log("collaborationList====", collaborationList);
-
   const layout = {
     labelCol: {
       span: 24,
@@ -163,8 +159,6 @@ function Collaboration() {
     updatedCollaboration.collaborationStatus = values.collaborationStatusModal;
     updatedCollaboration.mouDocId = mouDocUploadIdModal;
 
-    console.log("updatedCollaboration-----", updatedCollaboration);
-    console.log("selectedCollaborationId-----", selectedCollaborationId);
     dispatch(updateCollaboration(updatedCollaboration, selectedCollaborationId));
     dispatch(showHideModal(false));
     formModal.resetFields();
@@ -184,7 +178,6 @@ function Collaboration() {
       },
     ]);
 
-    console.log("sel rec --- ", record);
     formModal.setFieldsValue({
       collaboratedAgencyNameModal: record && record.collaboratedAgencyName,
       collaboratedAgencyAddressModal: record && record.collaboratedAgencyAddress,

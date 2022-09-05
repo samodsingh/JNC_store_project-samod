@@ -14,7 +14,6 @@ function addFacultyQfApi(payload) {
       },
     })
     .then((response) => {
-      console.log(response);
       return Promise.resolve(response.data);
     })
     .catch((err) => {

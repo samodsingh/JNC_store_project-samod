@@ -16,6 +16,7 @@ const initialState = {
   modalVisibleState: false,
   confirmEditProductLoadingState: false,
   facultyOrUsersList: [],
+  designationsList: [],
 };
 
 export default function user(state = initialState, action) {
@@ -155,6 +156,26 @@ export default function user(state = initialState, action) {
     };
       
   case type.GET_ALL_FACULTY_OR_USER_ERROR:
+    return {
+      ...state,
+      isLoading: false,
+      error: action.message,
+    };
+
+  case type.GET_ALL_DESIGNATIONS_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+  
+  case type.GET_ALL_DESIGNATIONS_SUCCESS:
+    return {
+      ...state,
+      isLoading: false,
+      designationsList: action.designationsList,
+    };
+      
+  case type.GET_ALL_DESIGNATIONS_ERROR:
     return {
       ...state,
       isLoading: false,

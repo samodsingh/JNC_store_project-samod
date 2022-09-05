@@ -158,7 +158,6 @@ export function* getAllCollaborationTypeSaga() {
 
 
 function updateCollaborationApi(payload) {
-  console.log("before collaboration id api call---", payload.collaborationId);
   return axios
     .put(`${process.env.REACT_APP_API_URL}/api/collaboration/${payload.collaborationId}`, payload.updatedCollaboration, {
       withCredentials: true,
@@ -177,7 +176,6 @@ function updateCollaborationApi(payload) {
 function* updateCollaborationAction(action) {
   try {
     const res = yield call(updateCollaborationApi, action.payload);
-    console.log("res update collaboration------", res);
     if (res.success) {
       yield put({
         type: types.UPDATE_COLLABORATION_SUCCESS,

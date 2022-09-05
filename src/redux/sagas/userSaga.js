@@ -248,3 +248,45 @@ export function* getAllFacultyOrUserSaga() {
   yield takeEvery(types.GET_ALL_FACULTY_OR_USER_REQ, getAllFacultyOrUserAction);
 }
 
+function getAllDesignationsApi() {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/api/designations`,{
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      })
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* getAllDesignationsAction() {
+  try {
+    const res = yield call(getAllDesignationsApi);
+    if (res.success) {
+      yield put({
+        type: types.GET_ALL_DESIGNATIONS_SUCCESS,
+        designationsList: res.data,
+      });
+    } else {
+      yield put({
+        type: types.GET_ALL_DESIGNATIONS_ERROR,
+        message: res.message || "Error in getting designations list, Please try after sometime."
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: types.GET_ALL_DESIGNATIONS_ERROR,
+      message: "Error in getting designations list, Please try after sometime."
+    });
+  }
+}
+export function* getAllDesignationsSaga() {
+  yield takeEvery(types.GET_ALL_DESIGNATIONS_REQ, getAllDesignationsAction);
+}
+

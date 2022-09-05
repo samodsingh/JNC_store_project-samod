@@ -47,6 +47,12 @@ export function getAllFacultyOrUser() {
   }
 }
 
+export function getAllDesignations() {
+  return {
+    type: type.GET_ALL_DESIGNATIONS_REQ,
+  }
+}
+
 export function setSelectedFacultyUserForEdit(record) {
   return {
     type: type.SET_SELECTED_FACULTY_USER_FOR_EDIT,

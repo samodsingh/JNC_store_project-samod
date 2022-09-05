@@ -64,7 +64,6 @@ function Department() {
     dispatch(showHideModal(false));
   }
   const showModalAndEdit = (record) => {
-    console.log("sel rec --- ", record);
     setSelectedDeptId(record.id);
     dispatch(showHideModal(true));
     dispatch(setSelectedItemForEdit(record));

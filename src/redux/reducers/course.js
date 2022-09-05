@@ -6,10 +6,36 @@ const initialState = {
   isLoading: false,
   error: null,
   courseList: [],
+  courseTypeList: [],
+  preRequisiteList: [],
 };
 
-export default function department(state = initialState, action) {
+export default function course(state = initialState, action) {
   switch (action.type) {
+  case type.GET_ALL_COURSE_TYPE_RQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+    
+  case type.GET_ALL_COURSE_TYPE_SUCCESS:
+    return {
+      ...state,
+      isLoading: false,
+      courseTypeList: action.courseTypeList,
+    };
+        
+  case type.GET_ALL_COURSE_TYPE_ERROR:
+    notification.error({
+      message: "JNC Get Course Type Error",
+      description:
+            action.message || "Course type fetch failed, please try after sometime.",
+    });
+    return {
+      ...state,
+      isLoading: false,
+    };
+
   case type.GET_ALL_COURSE_REQ:
     return {
       ...state,
@@ -28,6 +54,30 @@ export default function department(state = initialState, action) {
       message: "JNC Get Course Error",
       description:
             action.message || "Courses fetch failed, please try after sometime.",
+    });
+    return {
+      ...state,
+      isLoading: false,
+    };
+
+  case type.GET_ALL_PRE_REQUISIT_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+    
+  case type.GET_ALL_PRE_REQUISITE_SUCCESS:
+    return {
+      ...state,
+      isLoading: false,
+      preRequisiteList: action.preRequisiteList,
+    };
+        
+  case type.GET_ALL_PRE_REQUISITE_ERROR:
+    notification.error({
+      message: "JNC Get Pre-Requisite Error",
+      description:
+            action.message || "Pre-Requisite fetch failed, please try after sometime.",
     });
     return {
       ...state,

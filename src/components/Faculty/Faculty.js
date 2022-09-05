@@ -13,7 +13,7 @@ import { EditOutlined } from "@ant-design/icons";
 import "./Faculty.css";
 import { getAllDepartments } from "../../redux/actions/department";
 import { AADHAR_DOC, AADHAR_DOC_MODAL, ACCESS_TOKEN, NA, NET_QUALIFIED_CERT_DOC, NET_QUALIFIED_CERT_DOC_MODAL, PAN_DOC, PAN_DOC_MODAL, SLET_QUALIFIED_CERT_DOC, SLET_QUALIFIED_CERT_DOC_MODAL } from "../../constants/constants";
-import { addFacultyUser, getAllFacultyOrUser, setSelectedFacultyUserForEdit, updateFacultyUser } from "../../redux/actions/user";
+import { addFacultyUser, getAllDesignations, getAllFacultyOrUser, setSelectedFacultyUserForEdit, updateFacultyUser } from "../../redux/actions/user";
 import { showHideModal } from "../../redux/actions/utils";
 
 function Faculty() {
@@ -53,7 +53,9 @@ function Faculty() {
   const facultyOrUsersList = useSelector((state) => state.user.facultyOrUsersList);
   const confirmEditFacultyUserLoadingState = useSelector((state) => state.user.confirmEditFacultyUserLoadingState);
   const selectedFacultyUserForEdit = useSelector((state) => state.user.selectedFacultyUserForEdit);
+  const designationsList = useSelector((state) => state.user.designationsList);
 
+  console.log("designationsList------------ ", designationsList);
   const layout = {
     labelCol: {
       span: 24,
@@ -125,7 +127,7 @@ function Faculty() {
       aadhaarDocIdModal: record && record.aadhaarDoc && record.aadhaarDoc.id,
       roleModal: record && record.role && record.role.map(r => r.role),
       joiningDateModal: record && record.joiningDate && moment(record.joiningDate),
-      designationModal: record && record.designation,
+      designationIdModal: record && record.designation && record.designation.id,
       belongToDepartmentIdModal: record && record.belongToDepartment && record.belongToDepartment.id,
       postalCodeModal: record && record.postalCode,
       cityOrVillModal: record && record.cityOrVill,
@@ -219,7 +221,7 @@ function Faculty() {
     updatedValues.motherName = values.motherNameModal;
     updatedValues.pan = values.panModal;
     updatedValues.aadhaar = values.aadhaarModal;
-    updatedValues.designation = values.designationModal;
+    updatedValues.designationId = values.designationIdModal;
     updatedValues.addressLine1 = values.addressLine1Modal;
     updatedValues.addressLine2 = values.addressLine2Modal;
     updatedValues.postalCode = values.postalCodeModal;
@@ -529,6 +531,13 @@ function Faculty() {
       key: "designation",
       dataIndex: "designation",
       width: "10%",
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.designation && record.designation.name }</span>
+          </>
+        );
+      },
     },
     {
       title: "Department",
@@ -1097,17 +1106,20 @@ function Faculty() {
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <Form.Item
                       className="mis-form-item"
-                      name="designationModal"
+                      name="designationIdModal"
                       label="Designation"
                       rules={[
                         {
                           required: true,
-                          message: "Please Input Designation",
-                          min: 2
+                          message: "Please Select Designation",
                         },
                       ]}
                     >
-                      <Input type="text" placeholder="Designation" />
+                      <Select placeholder="Select Designation">
+                        {designationsList.map( des => (
+                          <Option key={des.id} value={des.id}>{des.name}</Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -1532,6 +1544,8 @@ function Faculty() {
   ]
 
   const onFinish = (values) => {
+    console.log("designationId----------", values);
+
     values.aadhaarDocId = aadharDocUploadId;
     values.panDocId = panDocUploadId;
     values.netQualifiedCertificateDocId = netQualifiedCertDocUploadId;
@@ -1807,7 +1821,7 @@ function Faculty() {
   useEffect(() => {
     dispatch(getAllDepartments());
     dispatch(getAllFacultyOrUser());
-
+    dispatch(getAllDesignations());
   }, [dispatch]);
 
   return (
@@ -2181,17 +2195,20 @@ function Faculty() {
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
                   className="mis-form-item"
-                  name="designation"
+                  name="designationId"
                   label="Designation"
                   rules={[
                     {
                       required: true,
-                      message: "Please Input Designation",
-                      min: 3
+                      message: "Please Select Designation",
                     },
                   ]}
                 >
-                  <Input type="text" placeholder="Designation" />
+                  <Select placeholder="Select Designation">
+                    {designationsList.map( des => (
+                      <Option key={des.id} value={des.id}>{des.name}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
