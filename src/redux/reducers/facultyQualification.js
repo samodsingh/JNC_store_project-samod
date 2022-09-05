@@ -6,6 +6,7 @@ const initialState = {
   error: null,
   selectedFacultyQfForEdit: undefined,
   facultyQf_List: [],
+  degreeList:[],
 };
 
 export default function facultyQualification(state = initialState, action) {
@@ -105,6 +106,29 @@ export default function facultyQualification(state = initialState, action) {
       selectedFacultyQfForEdit: action.payload,
     };
 
+  case type.GET_ALL_DEGREE_REQ:
+    return {
+      ...state,
+      isLoading: true,
+    };
+    
+  case type.GET_ALL_DEGREE_SUCCESS:
+    return {
+      ...state,
+      isLoading: false,
+      degreeList: action.degreeList,
+    };
+      
+  case type.GET_ALL_DEGREE_ERROR:
+    notification.error({
+      message: "Couldn't fetch Available Qualification Titles!",
+      description:
+          action.message,
+    });
+    return {
+      ...state,
+      isLoading: false,
+    };
   default:
     return state;
   }

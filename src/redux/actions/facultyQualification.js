@@ -28,4 +28,10 @@ export function setSelectedFacultyQfForEdit(record) {
   };
 }
 
+export function getAllDegreeTitles() {
+  return {
+    type: type.GET_ALL_DEGREE_REQ,
+  }
+}
+
 

@@ -4,7 +4,7 @@ import { addNewCourseSaga, getAllCourseSaga, updateCourseSaga } from "./courseSa
 import { addNewDepartmentSaga, getAllDepartmentsSaga, updateDepartmentSaga } from "./departmentSaga";
 import { getAllProgrammesSaga } from "./programmeSaga";
 import { userSaga, userLoginSaga, userLogoutSaga, getCurrentUserSaga, getAllFacultyOrUserSaga, updateFacultyUserSaga, addNewFacultyUserSaga } from "./userSaga";
-import { addFacultyQfSaga, getFacultyQfSaga, updateFacultyQfSaga } from "./facultyQualificationSaga"
+import { addFacultyQfSaga, getAllDegreeTitlesSaga, getFacultyQfSaga, updateFacultyQfSaga } from "./facultyQualificationSaga"
 
 export default function* rootSaga() {
   yield all([
@@ -30,5 +30,6 @@ export default function* rootSaga() {
     addFacultyQfSaga(),
     getFacultyQfSaga(),
     updateFacultyQfSaga(),
+    getAllDegreeTitlesSaga(),
   ])
 }
