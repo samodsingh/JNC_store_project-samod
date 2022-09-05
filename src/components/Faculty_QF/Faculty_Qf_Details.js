@@ -46,14 +46,16 @@ const Faculty_QF_Grid = () => {
     (state) => state.facultyQualification.selectedFacultyQfForEdit
   );
 
-  const onChangeCertificateModal = ({ fileList: newFileList }) => {
-    setdefaultFileCertificateModal(newFileList);
-  };
-
   useEffect(() => {
     dispatch(getFacultyQf(user.id));
     dispatch(getAllDegreeTitles());
   }, [dispatch]);
+
+  
+  const onChangeCertificateModal = ({ fileList: newFileList }) => {
+    console.log(newFileList)
+    setdefaultFileCertificateModal(newFileList);
+  };
 
   const onPreviewModal = async (file) => {
     let src = file.url;
@@ -73,7 +75,7 @@ const Faculty_QF_Grid = () => {
   const uploadCertificateModal = async (options) => {
     let previousDocId;
     const { onSuccess, onError, file, onProgress } = options;
-    const FormData = new FormData();
+    const FormDataModal = new FormData();
     const config = {
       headers: {
         "content-type": "multipart/form-data",
@@ -89,17 +91,16 @@ const Faculty_QF_Grid = () => {
         onProgress({ percent: (event.loaded / event.total) * 100 });
       },
     };
-    FormData.append("file", file);
+    FormDataModal.append("file", file);
     try {
       previousDocId = CertificateUploadIdModal;
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/upload/${previousDocId}`,
-        FormData,
+        FormDataModal,
         config
       );
-
       onSuccess("Ok");
-      setCertificateUploadIdModal(res.data.id);
+      setCertificateUploadIdModal(res.data.data.id);
     } catch (err) {
       onError({ err });
     }
@@ -111,7 +112,7 @@ const Faculty_QF_Grid = () => {
   const PopulateFacultyQfInModal = (record) => {
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyQfForEdit(record));
-
+    console.log(record)
     setCertificateUploadIdModal(
       record && record.qualificationCert && record.qualificationCert.id
     );
@@ -244,46 +245,46 @@ const Faculty_QF_Grid = () => {
           <>
             {(record && record.qualificationCert === null) ||
             record.qualificationCert === undefined ? (
-              <span>NA</span>
-            ) : (
-              <a
-                href={
-                  record &&
+                <span>NA</span>
+              ) : (
+                <a
+                  href={
+                    record &&
+                    record.qualificationCert &&
+                    record.qualificationCert.docUrl
+                  }
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {record &&
                   record.qualificationCert &&
-                  record.qualificationCert.docUrl
-                }
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {record &&
-                record.qualificationCert &&
-                record.qualificationCert.docUrl &&
-                record.qualificationCert.docUrl.includes(".pdf") ? (
-                  <embed
-                    width="150"
-                    height="50"
-                    src={
-                      record &&
-                      record.qualificationCert &&
-                      record.qualificationCert.qualificationCertId
-                    }
-                    type="application/pdf"
-                  ></embed>
-                ) : (
-                  <img
-                    src={
-                      record &&
-                      record.qualificationCert &&
-                      record.qualificationCert.docUrl
-                    }
-                    height={50}
-                    width={50}
-                    alt="Qualification Certificate"
-                  />
-                )}
-              </a>
-            )}
+                  record.qualificationCert.docUrl &&
+                  record.qualificationCert.docUrl.includes(".pdf") ? (
+                      <embed
+                        width="150"
+                        height="50"
+                        src={
+                          record &&
+                          record.qualificationCert &&
+                          record.qualificationCert.qualificationCertId
+                        }
+                        type="application/pdf"
+                      ></embed>
+                    ) : (
+                      <img
+                        src={
+                          record &&
+                          record.qualificationCert &&
+                          record.qualificationCert.docUrl
+                        }
+                        height={50}
+                        width={50}
+                        alt="Qualification Certificate"
+                      />
+                    )}
+                </a>
+              )}
           </>
         );
       },
@@ -878,7 +879,6 @@ const Faculty_QF_Grid = () => {
                     onChange={onChangeCertificateModal}
                     onPreview={onPreviewModal}
                     fileList={defaultFileCertificateModal}
-                    className="image-upload-grid"
                     rules={[
                       {
                         required: true,
