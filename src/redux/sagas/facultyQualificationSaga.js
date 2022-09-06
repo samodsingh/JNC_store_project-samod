@@ -136,7 +136,6 @@ export function* updateFacultyQfSaga() {
 }
 
 function getAllDegreeTitlesApi() {
-  console.log("inside api")
   return axios
     .get(
       `${process.env.REACT_APP_API_URL}/api/degree`,
@@ -144,7 +143,6 @@ function getAllDegreeTitlesApi() {
       httpHeaderConfig
     )
     .then((response) => {
-      console.log(response)
       return Promise.resolve(response.data);
     })
     .catch((err) => {
@@ -152,10 +150,8 @@ function getAllDegreeTitlesApi() {
     });
 }
 function* getAllDegreeTitlesAction() {
-  console.log("inside action")
   try {
     const res = yield call(getAllDegreeTitlesApi);
-    console.log(res)
     if (res.success) {
       yield put({
         type: type.GET_ALL_DEGREE_SUCCESS,
@@ -173,6 +169,5 @@ function* getAllDegreeTitlesAction() {
   }
 }
 export function* getAllDegreeTitlesSaga() {
-  console.log("here")
   yield takeEvery(type.GET_ALL_DEGREE_REQ, getAllDegreeTitlesAction);
 }
