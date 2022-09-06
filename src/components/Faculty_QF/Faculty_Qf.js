@@ -41,10 +41,6 @@ const Faculty_qualification = () => {
     setdefaultFileCertificate(newFileList);
   };
 
-  const onchangeDegree = (value) => {
-    console.log(value);
-  };
-
   const onPreview = async (file) => {
     let source = file.url;
     if (!source) {
@@ -95,7 +91,6 @@ const Faculty_qualification = () => {
   };
 
   const onFinish = (values) => {
-    console.log(values);
     const defaultpercentage = values.percentage;
     values.userId = user.id;
     values.percentage = defaultpercentage ? defaultpercentage : "0";
@@ -138,7 +133,6 @@ const Faculty_qualification = () => {
                     ]}
                   >
                     <Select
-                      onChange={onchangeDegree}
                       placeholder="Select the Qualification"
                       style={{ textAlign: "left" }}
                     >
