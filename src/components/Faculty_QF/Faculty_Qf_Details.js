@@ -53,7 +53,6 @@ const Faculty_QF_Grid = () => {
 
   
   const onChangeCertificateModal = ({ fileList: newFileList }) => {
-    console.log(newFileList)
     setdefaultFileCertificateModal(newFileList);
   };
 
@@ -112,7 +111,6 @@ const Faculty_QF_Grid = () => {
   const PopulateFacultyQfInModal = (record) => {
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyQfForEdit(record));
-    console.log(record)
     setCertificateUploadIdModal(
       record && record.qualificationCert && record.qualificationCert.id
     );
