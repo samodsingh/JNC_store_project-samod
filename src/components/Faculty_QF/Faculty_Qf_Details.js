@@ -19,6 +19,7 @@ import {
   getFacultyQf,
   updateFacultyQf,
   setSelectedFacultyQfForEdit,
+  getAllDegreeTitles,
 } from "../../redux/actions/facultyQualification";
 import "./Faculty_Qf.css";
 import { showHideModal } from "../../redux/actions/utils";
@@ -26,6 +27,10 @@ import { ACCESS_TOKEN } from "../../constants/constants";
 
 const Faculty_QF_Grid = () => {
   const [formModal] = Form.useForm();
+  const dispatch = useDispatch();
+  const degreeList = useSelector(
+    (state) => state.facultyQualification.degreeList
+  );
   const [CertificateUploadIdModal, setCertificateUploadIdModal] = useState(-1);
   const [defaultFileCertificateModal, setdefaultFileCertificateModal] =
     useState([]);
@@ -35,12 +40,18 @@ const Faculty_QF_Grid = () => {
   const faculty_Qf_Data = useSelector(
     (state) => state.facultyQualification.facultyQf_List
   );
-
+  const user = useSelector((state) => state.user.userDetail);
 
   const selectedFacultyQfForEdit = useSelector(
     (state) => state.facultyQualification.selectedFacultyQfForEdit
   );
 
+  useEffect(() => {
+    dispatch(getFacultyQf(user.id));
+    dispatch(getAllDegreeTitles());
+  }, [dispatch]);
+
+  
   const onChangeCertificateModal = ({ fileList: newFileList }) => {
     setdefaultFileCertificateModal(newFileList);
   };
@@ -63,7 +74,7 @@ const Faculty_QF_Grid = () => {
   const uploadCertificateModal = async (options) => {
     let previousDocId;
     const { onSuccess, onError, file, onProgress } = options;
-    const FormData = new FormData();
+    const FormDataModal = new FormData();
     const config = {
       headers: {
         "content-type": "multipart/form-data",
@@ -79,28 +90,20 @@ const Faculty_QF_Grid = () => {
         onProgress({ percent: (event.loaded / event.total) * 100 });
       },
     };
-    FormData.append("file", file);
+    FormDataModal.append("file", file);
     try {
       previousDocId = CertificateUploadIdModal;
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/upload/${previousDocId}`,
-        FormData,
+        FormDataModal,
         config
       );
-
       onSuccess("Ok");
-      setCertificateUploadIdModal(res.data.id);
+      setCertificateUploadIdModal(res.data.data.id);
     } catch (err) {
       onError({ err });
     }
   };
-
-  const user = useSelector((state) => state.user.userDetail);
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getFacultyQf(user.id));
-  }, [dispatch]);
 
   const modalVisibleState = useSelector(
     (state) => state.utils.modalVisibleState
@@ -108,7 +111,6 @@ const Faculty_QF_Grid = () => {
   const PopulateFacultyQfInModal = (record) => {
     dispatch(showHideModal(true));
     dispatch(setSelectedFacultyQfForEdit(record));
-
     setCertificateUploadIdModal(
       record && record.qualificationCert && record.qualificationCert.id
     );
@@ -123,7 +125,7 @@ const Faculty_QF_Grid = () => {
       },
     ]);
     formModal.setFieldsValue({
-      degreeNameModal: record && record.degreeName,
+      degreeIdModal: record && record.degree && record.degree.id,
       monthYearCompletionModal: record && record.monthYearCompletion,
       natureModal: record && record.nature,
       specializationModal: record && record.specialization,
@@ -144,13 +146,15 @@ const Faculty_QF_Grid = () => {
 
   const UpdateFacultyQfData = (values, selectedFacultyQfId) => {
     let ModifiedData = { Qualification_id: selectedFacultyQfId };
-    ModifiedData.degreeName = values.degreeNameModal;
+    ModifiedData.degreeId = values.degreeIdModal;
     ModifiedData.monthYearCompletion = values.monthYearCompletionModal;
     ModifiedData.nature = values.natureModal;
     ModifiedData.specialization = values.specializationModal;
     ModifiedData.university = values.universityModal;
     ModifiedData.instituteName = values.instituteNameModal;
-    ModifiedData.percentage = values.percentageModal;
+    ModifiedData.percentage = values.percentageModal
+      ? values.percentageModal
+      : "0";
     ModifiedData.state = values.stateModal;
     ModifiedData.country = values.countryModal;
     ModifiedData.qualificationCertId = CertificateUploadIdModal;
@@ -166,13 +170,20 @@ const Faculty_QF_Grid = () => {
   const facultyQf_Columns = [
     {
       title: "Name of the degree",
-      key: "degreeName",
-      dataIndex: "degreeName",
+      key: "degreeId",
+      dataIndex: "degreeId",
       width: 100,
+      render: (_, record) => {
+        return (
+          <>
+            <span>{record && record.degree && record.degree.name}</span>
+          </>
+        );
+      },
       filters: faculty_Qf_Data.map((f) => {
-        return { text: f.degreeName, value: f.degreeName };
+        return { text: f.degree.name, value: f.degree.name };
       }),
-      onFilter: (value, record) => record.degreeName.indexOf(value) === 0,
+      onFilter: (value, record) => record.degree.name.indexOf(value) === 0,
     },
     {
       title: "Month and Year of Completion",
@@ -246,9 +257,9 @@ const Faculty_QF_Grid = () => {
                   rel="noopener noreferrer"
                 >
                   {record &&
-                record.qualificationCert &&
-                record.qualificationCert.docUrl &&
-                record.qualificationCert.docUrl.includes(".pdf") ? (
+                  record.qualificationCert &&
+                  record.qualificationCert.docUrl &&
+                  record.qualificationCert.docUrl.includes(".pdf") ? (
                       <embed
                         width="150"
                         height="50"
@@ -326,7 +337,7 @@ const Faculty_QF_Grid = () => {
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <Form.Item
                 className="input_item"
-                name="degreeNameModal"
+                name="degreeIdModal"
                 label="Name of the degree"
                 rules={[
                   {
@@ -335,7 +346,16 @@ const Faculty_QF_Grid = () => {
                   },
                 ]}
               >
-                <Input placeholder="Name of the degree" />
+                <Select
+                  placeholder="Select the Qualification"
+                  style={{ textAlign: "left" }}
+                >
+                  {degreeList.map((dL) => (
+                    <Option key={dL.id} value={dL.id}>
+                      {`${dL.name}`}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -434,13 +454,12 @@ const Faculty_QF_Grid = () => {
                 label="Percentage"
                 rules={[
                   {
-                    required: true,
-                    message: "Please Enter the Percentage.",
-                    pattern: /^(?:\d*)$/,
+                    message: "Please Enter the Correct Percentage.",
+                    pattern: /^((100)|(\d{1,2}(\.\d*)?))%?$/,
                   },
                   {
-                    max: 3,
-                    message: "Percentage should contain 1-3 digits",
+                    max: 6,
+                    message: "Percentage should contain 1-5 digits",
                   },
                 ]}
               >
@@ -859,7 +878,6 @@ const Faculty_QF_Grid = () => {
                     onChange={onChangeCertificateModal}
                     onPreview={onPreviewModal}
                     fileList={defaultFileCertificateModal}
-                    className="image-upload-grid"
                     rules={[
                       {
                         required: true,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Form,
@@ -15,18 +15,27 @@ import axios from "axios";
 const { Option } = Select;
 import "./Faculty_Qf.css";
 import { ACCESS_TOKEN } from "../../constants/constants";
-import { addFacultyQf } from "../../redux/actions/facultyQualification";
+import {
+  addFacultyQf,
+  getAllDegreeTitles,
+} from "../../redux/actions/facultyQualification";
 import Faculty_QF_Grid from "./Faculty_Qf_Details";
 
 const Faculty_qualification = () => {
   const [form] = Form.useForm();
   const user = useSelector((state) => state.user.userDetail);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const dispatch = useDispatch();
-
+  const degreeList = useSelector(
+    (state) => state.facultyQualification.degreeList
+  );
   const [CertificateUploadId, setCertificateUploadId] = useState(-1);
   const [defaultFileCertificate, setdefaultFileCertificate] = useState([]);
   const [progressCertificateUpload, setprogressCertificateUpload] = useState(0);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllDegreeTitles());
+  }, [dispatch]);
 
   const onChangeCertificate = ({ fileList: newFileList }) => {
     setdefaultFileCertificate(newFileList);
@@ -82,7 +91,9 @@ const Faculty_qualification = () => {
   };
 
   const onFinish = (values) => {
+    const defaultpercentage = values.percentage;
     values.userId = user.id;
+    values.percentage = defaultpercentage ? defaultpercentage : "0";
     values.qualificationCertId = CertificateUploadId;
     dispatch(addFacultyQf(values));
     setprogressCertificateUpload(0);
@@ -112,16 +123,25 @@ const Faculty_qualification = () => {
                 <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                   <Form.Item
                     className="input_item"
-                    name="degreeName"
+                    name="degreeId"
                     label="Name of the degree"
                     rules={[
                       {
                         required: true,
-                        message: "Please Enter the Degree Name",
+                        message: "Please Choose the Degree Name",
                       },
                     ]}
                   >
-                    <Input placeholder="Name of the degree" />
+                    <Select
+                      placeholder="Select the Qualification"
+                      style={{ textAlign: "left" }}
+                    >
+                      {degreeList.map((dL) => (
+                        <Option key={dL.id} value={dL.id}>
+                          {`${dL.name}`}
+                        </Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -132,7 +152,8 @@ const Faculty_qualification = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please Enter the Month and Year of Completion",
+                        message:
+                          "Please Enter the Month and Year of Completion",
                       },
                     ]}
                   >
@@ -147,7 +168,10 @@ const Faculty_qualification = () => {
                     name="nature"
                     label="Nature"
                     rules={[
-                      { required: true, message: "Please Enter the Nature of the Course" },
+                      {
+                        required: true,
+                        message: "Please Enter the Nature of the Course",
+                      },
                     ]}
                   >
                     <Select
@@ -167,7 +191,10 @@ const Faculty_qualification = () => {
                     name="specialization"
                     label="Specialization"
                     rules={[
-                      { required: true, message: "Please Enter the Specialization" },
+                      {
+                        required: true,
+                        message: "Please Enter the Specialization",
+                      },
                     ]}
                   >
                     <Input placeholder="Specialization" />
@@ -181,7 +208,10 @@ const Faculty_qualification = () => {
                     name="university"
                     label="University"
                     rules={[
-                      { required: true, message: "Please Enter the University Name" },
+                      {
+                        required: true,
+                        message: "Please Enter the University Name",
+                      },
                     ]}
                   >
                     <Input placeholder="University" />
@@ -193,7 +223,10 @@ const Faculty_qualification = () => {
                     name="instituteName"
                     label="Institute Name"
                     rules={[
-                      { required: true, message: "Please Enter the Institute Name" },
+                      {
+                        required: true,
+                        message: "Please Enter the Institute Name",
+                      },
                     ]}
                   >
                     <Input placeholder="Institute Name" />
@@ -208,13 +241,12 @@ const Faculty_qualification = () => {
                     label="Percentage"
                     rules={[
                       {
-                        required: true,
-                        message: "Please Enter the Percentage.",
-                        pattern: /^(?:\d*)$/,
+                        message: "Please Enter the Correct Percentage.",
+                        pattern: /^((100)|(\d{1,2}(\.\d*)?))%?$/,
                       },
                       {
-                        max: 3,
-                        message: "Percentage should contain 1-3 digits",
+                        max: 6,
+                        message: "Percentage should contain 1-5 digits",
                       },
                     ]}
                   >
@@ -649,7 +681,6 @@ const Faculty_qualification = () => {
                         onChange={onChangeCertificate}
                         onPreview={onPreview}
                         fileList={defaultFileCertificate}
-                        className="image-upload-grid"
                         rules={[
                           {
                             required: true,

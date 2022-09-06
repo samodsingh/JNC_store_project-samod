@@ -1,8 +1,10 @@
 import axios from "axios";
 import { call, put, takeEvery } from "redux-saga/effects";
+import { httpHeaderConfig } from "../../constants/constants";
 import * as type from "../types";
 
 function addFacultyQfApi(payload) {
+  console.log(payload);
   return axios
     .post(`${process.env.REACT_APP_API_URL}/api/qualification`, payload, {
       withCredentials: true,
@@ -131,4 +133,41 @@ function* updateFacultyQfAction(action) {
 }
 export function* updateFacultyQfSaga() {
   yield takeEvery(type.UPDATE_FACULTY_QF_REQ, updateFacultyQfAction);
+}
+
+function getAllDegreeTitlesApi() {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/api/degree`,
+      { withCredentials: true },
+      httpHeaderConfig
+    )
+    .then((response) => {
+      return Promise.resolve(response.data);
+    })
+    .catch((err) => {
+      return Promise.resolve(err.response.data);
+    });
+}
+function* getAllDegreeTitlesAction() {
+  try {
+    const res = yield call(getAllDegreeTitlesApi);
+    if (res.success) {
+      yield put({
+        type: type.GET_ALL_DEGREE_SUCCESS,
+        degreeList: res.data,
+      });
+    } else {
+      yield put({
+        type: type.GET_ALL_DEGREE_ERROR,
+      });
+    }
+  } catch (e) {
+    yield put({
+      type: type.GET_ALL_DEGREE_ERROR,
+    });
+  }
+}
+export function* getAllDegreeTitlesSaga() {
+  yield takeEvery(type.GET_ALL_DEGREE_REQ, getAllDegreeTitlesAction);
 }
