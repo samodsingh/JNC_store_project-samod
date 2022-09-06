@@ -175,9 +175,6 @@ const Faculty_QF_Grid = () => {
       key: "degreeId",
       dataIndex: "degreeId",
       width: 100,
-      filters: faculty_Qf_Data.map((f) => {
-        return { text: f.degree.name, value: f.degree.id };
-      }),
       render: (_, record) => {
         return (
           <>
@@ -185,6 +182,10 @@ const Faculty_QF_Grid = () => {
           </>
         );
       },
+      filters: faculty_Qf_Data.map((f) => {
+        return { text: f.degree.name, value: f.degree.name };
+      }),
+      onFilter: (value, record) => record.degree.name.indexOf(value) === 0,
     },
     {
       title: "Month and Year of Completion",
@@ -460,7 +461,7 @@ const Faculty_QF_Grid = () => {
                   },
                   {
                     max: 6,
-                    message: "Percentage should contain 1-6 digits",
+                    message: "Percentage should contain 1-5 digits",
                   },
                 ]}
               >

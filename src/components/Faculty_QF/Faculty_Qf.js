@@ -247,12 +247,12 @@ const Faculty_qualification = () => {
                     label="Percentage"
                     rules={[
                       {
-                        message: "Please Enter the Percentage.",
-                        pattern: /^(?:\d*)$/,
+                        message: "Please Enter the Correct Percentage.",
+                        pattern: /^((100)|(\d{1,2}(\.\d*)?))%?$/,
                       },
                       {
-                        max: 10,
-                        message: "Percentage should contain 1-3 digits",
+                        max: 6,
+                        message: "Percentage should contain 1-5 digits",
                       },
                     ]}
                   >
