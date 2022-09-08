@@ -27,32 +27,6 @@ export function updatePassword(corrcetionPassword) {
   };
 } 
 
-export function addFacultyUser(faculty) {
-  return {
-    type: type.ADD_FACULTY_REQ,
-    payload: faculty,
-  }
-}
-
-export function updateFacultyUser(faculty) {
-  return {
-    type: type.UPDATE_FACULTY_REQ,
-    payload: faculty,
-  }
-}
-
-export function getAllFacultyOrUser() {
-  return {
-    type: type.GET_ALL_FACULTY_OR_USER_REQ,
-  }
-}
-
-export function getAllDesignations() {
-  return {
-    type: type.GET_ALL_DESIGNATIONS_REQ,
-  }
-}
-
 export function setSelectedFacultyUserForEdit(record) {
   return {
     type: type.SET_SELECTED_FACULTY_USER_FOR_EDIT,
